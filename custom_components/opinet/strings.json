@@ -31,10 +31,14 @@
   },
   "config_subentries": {
     "station": {
-      "title": "주유소",
+      "initiate_flow": {
+        "user": "주유소 추가"
+      },
+      "entry_type": "주유소",
       "step": {
         "user": {
           "title": "주유소 추가",
+          "description": "주유소를 추가하는 방법을 선택하세요.",
           "menu_options": {
             "search": "이름으로 검색",
             "by_id": "주유소 ID로 추가"

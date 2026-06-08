@@ -31,10 +31,14 @@
   },
   "config_subentries": {
     "station": {
-      "title": "Gas station",
+      "initiate_flow": {
+        "user": "Add gas station"
+      },
+      "entry_type": "Gas station",
       "step": {
         "user": {
           "title": "Add a gas station",
+          "description": "Choose how to add a gas station.",
           "menu_options": {
             "search": "Search by name",
             "by_id": "Add by station ID"
