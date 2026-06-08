@@ -7,6 +7,13 @@
         "data": {
           "api_key": "API key"
         }
+      },
+      "reauth_confirm": {
+        "title": "Reauthenticate Opinet",
+        "description": "The API key is no longer valid. Enter a new API key.",
+        "data": {
+          "api_key": "API key"
+        }
       }
     },
     "error": {
@@ -15,7 +22,8 @@
       "unknown": "An unexpected error occurred."
     },
     "abort": {
-      "already_configured": "This API key is already configured."
+      "already_configured": "This API key is already configured.",
+      "reauth_successful": "Re-authentication was successful."
     }
   },
   "options": {
@@ -426,7 +434,26 @@
       },
       "station_k015": {
         "name": "Auto LPG"
+      }
+    },
+    "binary_sensor": {
+      "car_wash": {
+        "name": "Car wash"
       },
+      "maintenance": {
+        "name": "Light maintenance"
+      },
+      "convenience_store": {
+        "name": "Convenience store"
+      },
+      "quality_certified": {
+        "name": "Quality-certified"
+      },
+      "good_station": {
+        "name": "Good (fair-price) station"
+      }
+    },
+    "device_tracker": {
       "station_location": {
         "name": "Location"
       }

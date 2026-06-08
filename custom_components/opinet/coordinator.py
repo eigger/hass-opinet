@@ -8,15 +8,18 @@ from __future__ import annotations
 
 from datetime import datetime
 import logging
-from typing import Any
+from typing import Any, NoReturn
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.exceptions import ConfigEntryAuthFailed
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.event import async_track_time_change
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .api import OpinetApi, OpinetError
+from .api import OpinetApi, OpinetAuthError, OpinetError
 from .const import (
+    BRANDS,
     DAILY_AVG_UPDATE_HOURS,
     DEFAULT_REFRESH_OFFSET_MINUTES,
     DOMAIN,
@@ -35,6 +38,13 @@ def _to_float(value: Any) -> float | None:
         return float(value)
     except (TypeError, ValueError):
         return None
+
+
+def _raise_update_error(err: OpinetError) -> NoReturn:
+    """인증 오류는 reauth 를 트리거하고, 그 외는 일반 갱신 실패로 처리한다."""
+    if isinstance(err, OpinetAuthError):
+        raise ConfigEntryAuthFailed(str(err)) from err
+    raise UpdateFailed(str(err)) from err
 
 
 class OpinetScheduledCoordinator(DataUpdateCoordinator[Any]):
@@ -114,7 +124,7 @@ class OpinetAvgCoordinator(OpinetScheduledCoordinator):
         try:
             rows = await self._api.async_get_avg_all_price()
         except OpinetError as err:
-            raise UpdateFailed(str(err)) from err
+            _raise_update_error(err)
 
         # Keyed by product code (PRODCD).
         return {
@@ -152,7 +162,7 @@ class OpinetRecentAvgCoordinator(OpinetScheduledCoordinator):
         try:
             rows = await self._api.async_get_avg_recent_price()
         except OpinetError as err:
-            raise UpdateFailed(str(err)) from err
+            _raise_update_error(err)
 
         # 제품별로 가장 최근 일자의 값만 남긴다.
         result: dict[str, dict[str, Any]] = {}
@@ -194,7 +204,7 @@ class OpinetWeeklyAvgCoordinator(OpinetScheduledCoordinator):
         try:
             rows = await self._api.async_get_avg_last_week()
         except OpinetError as err:
-            raise UpdateFailed(str(err)) from err
+            _raise_update_error(err)
 
         # AREA_CD 00 = 전국.
         result: dict[str, dict[str, Any]] = {}
@@ -234,11 +244,24 @@ class OpinetStationCoordinator(OpinetScheduledCoordinator):
         )
         self.station_id = station_id
 
+    @property
+    def device_info(self) -> DeviceInfo:
+        """주유소 기기 정보. 제조사(manufacturer)에 정유사(상표)를 넣는다."""
+        data = self.data or {}
+        refiner = BRANDS.get(data.get("brand", ""), data.get("brand"))
+        return DeviceInfo(
+            identifiers={(DOMAIN, self.station_id)},
+            # 기기 이름은 실제 주유소 상호(데이터) — 라벨이 아니므로 그대로 사용.
+            name=data.get("name") or self.station_id,
+            manufacturer=refiner or None,
+            model="Gas station",
+        )
+
     async def _async_update_data(self) -> dict[str, Any]:
         try:
             detail = await self._api.async_detail_by_id(self.station_id)
         except OpinetError as err:
-            raise UpdateFailed(str(err)) from err
+            _raise_update_error(err)
 
         prices: dict[str, dict[str, Any]] = {}
         for item in detail.get("OIL_PRICE", []) or []:

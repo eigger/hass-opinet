@@ -88,6 +88,41 @@ class OpinetConfigFlow(ConfigFlow, domain=DOMAIN):
             errors=errors,
         )
 
+    async def async_step_reauth(
+        self, entry_data: dict[str, Any]
+    ) -> ConfigFlowResult:
+        """Handle re-authentication when the API key becomes invalid."""
+        return await self.async_step_reauth_confirm()
+
+    async def async_step_reauth_confirm(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Ask for a new API key and update the entry."""
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            api_key = user_input[CONF_API_KEY].strip()
+            session = async_get_clientsession(self.hass)
+            api = OpinetApi(session, api_key)
+            try:
+                await api.async_get_avg_all_price()
+            except OpinetAuthError:
+                errors["base"] = "invalid_auth"
+            except OpinetConnectionError:
+                errors["base"] = "cannot_connect"
+            except OpinetError:
+                errors["base"] = "unknown"
+            else:
+                return self.async_update_reload_and_abort(
+                    self._get_reauth_entry(),
+                    data_updates={CONF_API_KEY: api_key},
+                )
+
+        return self.async_show_form(
+            step_id="reauth_confirm",
+            data_schema=vol.Schema({vol.Required(CONF_API_KEY): str}),
+            errors=errors,
+        )
+
     @classmethod
     @callback
     def async_get_supported_subentry_types(

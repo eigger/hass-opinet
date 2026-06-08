@@ -7,6 +7,13 @@
         "data": {
           "api_key": "API 키"
         }
+      },
+      "reauth_confirm": {
+        "title": "오피넷 재인증",
+        "description": "API 키가 더 이상 유효하지 않습니다. 새 API 키를 입력하세요.",
+        "data": {
+          "api_key": "API 키"
+        }
       }
     },
     "error": {
@@ -15,7 +22,8 @@
       "unknown": "알 수 없는 오류가 발생했습니다."
     },
     "abort": {
-      "already_configured": "이미 등록된 API 키입니다."
+      "already_configured": "이미 등록된 API 키입니다.",
+      "reauth_successful": "재인증되었습니다."
     }
   },
   "options": {
@@ -426,7 +434,26 @@
       },
       "station_k015": {
         "name": "자동차부탄"
+      }
+    },
+    "binary_sensor": {
+      "car_wash": {
+        "name": "세차장"
       },
+      "maintenance": {
+        "name": "경정비"
+      },
+      "convenience_store": {
+        "name": "편의점"
+      },
+      "quality_certified": {
+        "name": "품질인증주유소"
+      },
+      "good_station": {
+        "name": "착한주유소"
+      }
+    },
+    "device_tracker": {
       "station_location": {
         "name": "위치"
       }

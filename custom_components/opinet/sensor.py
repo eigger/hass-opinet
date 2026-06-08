@@ -51,14 +51,14 @@ async def async_setup_entry(
     # Per-station sensors, attached to their subentry/device.
     for subentry_id, coordinator in data.station_coordinators.items():
         prices: dict[str, Any] = (coordinator.data or {}).get("prices", {})
-        entities: list[SensorEntity] = [
-            OpinetStationSensor(coordinator, prodcd)
-            for prodcd in prices
-            if prodcd in PRODUCTS
-        ]
-        # 주유소 위치 센서(상태=ID, 속성=위경도) 1개.
-        entities.append(OpinetStationLocationSensor(coordinator))
-        async_add_entities(entities, config_subentry_id=subentry_id)
+        async_add_entities(
+            (
+                OpinetStationSensor(coordinator, prodcd)
+                for prodcd in prices
+                if prodcd in PRODUCTS
+            ),
+            config_subentry_id=subentry_id,
+        )
 
 
 def _avg_device_info(entry_id: str) -> DeviceInfo:
@@ -200,20 +200,6 @@ class OpinetWeeklyAvgSensor(
         }
 
 
-def _station_device_info(coordinator: OpinetStationCoordinator) -> DeviceInfo:
-    """주유소 기기 정보. 제조사(manufacturer)에 정유사(상표)를 넣는다."""
-    station_id = coordinator.station_id
-    data = coordinator.data or {}
-    refiner = BRANDS.get(data.get("brand", ""), data.get("brand"))
-    return DeviceInfo(
-        identifiers={(DOMAIN, station_id)},
-        # 기기 이름은 실제 주유소 상호(데이터) — 라벨이 아니므로 그대로 사용.
-        name=data.get("name") or station_id,
-        manufacturer=refiner or None,
-        model="Gas station",
-    )
-
-
 class OpinetStationSensor(
     CoordinatorEntity[OpinetStationCoordinator], SensorEntity
 ):
@@ -232,7 +218,7 @@ class OpinetStationSensor(
         station_id = coordinator.station_id
         self._attr_unique_id = f"{station_id}_{prodcd}"
         self._attr_translation_key = f"station_{prodcd.lower()}"
-        self._attr_device_info = _station_device_info(coordinator)
+        self._attr_device_info = coordinator.device_info
 
     @property
     def _price(self) -> dict[str, Any]:
@@ -261,38 +247,4 @@ class OpinetStationSensor(
             "tel": data.get("tel"),
             "trade_date": price.get("trade_dt"),
             "trade_time": price.get("trade_tm"),
-        }
-
-
-class OpinetStationLocationSensor(
-    CoordinatorEntity[OpinetStationCoordinator], SensorEntity
-):
-    """주유소 위치 센서: 상태=주유소 ID, 속성에 위도/경도(지도 표시 가능)."""
-
-    _attr_has_entity_name = True
-    _attr_translation_key = "station_location"
-    _attr_icon = "mdi:map-marker"
-
-    def __init__(self, coordinator: OpinetStationCoordinator) -> None:
-        super().__init__(coordinator)
-        self._attr_unique_id = f"{coordinator.station_id}_location"
-        self._attr_device_info = _station_device_info(coordinator)
-
-    @property
-    def native_value(self) -> str:
-        """주유소 ID."""
-        return self.coordinator.station_id
-
-    @property
-    def extra_state_attributes(self) -> dict[str, Any]:
-        data = self.coordinator.data or {}
-        return {
-            "station_id": self.coordinator.station_id,
-            "station_name": data.get("name"),
-            "address": data.get("address"),
-            # 지도(Map) 카드가 읽는 위치 속성.
-            "latitude": data.get("latitude"),
-            "longitude": data.get("longitude"),
-            "katec_x": data.get("gis_x"),
-            "katec_y": data.get("gis_y"),
         }
