@@ -228,9 +228,13 @@
       "name": "주유소 상세정보(ID)",
       "description": "주유소 ID로 상세/가격 조회.",
       "fields": {
+        "device_id": {
+          "name": "주유소(등록됨)",
+          "description": "등록된 주유소에서 선택 (또는 아래 ID 직접 입력)"
+        },
         "station_id": {
           "name": "주유소 ID",
-          "description": "예: A0019752"
+          "description": "직접 입력 시 사용 (예: A0019752). 주유소 선택 시 무시됨"
         }
       }
     },

@@ -21,12 +21,14 @@ from homeassistant.core import (
 )
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers import device_registry as dr
 
 from .api import OpinetApi, OpinetError
 from .const import DOMAIN
 from .geo import wgs84_to_katec
 
 SERVICE_GET_AROUND = "get_around"
+SERVICE_GET_STATION_DETAIL = "get_station_detail"
 
 _GET_AROUND_SCHEMA = vol.Schema(
     {
@@ -36,6 +38,13 @@ _GET_AROUND_SCHEMA = vol.Schema(
         vol.Required("radius"): vol.All(vol.Coerce(int), vol.Range(1, 5000)),
         vol.Required("prodcd"): cv.string,
         vol.Optional("sort", default=1): vol.All(vol.Coerce(int), vol.In([1, 2])),
+    }
+)
+
+_GET_STATION_DETAIL_SCHEMA = vol.Schema(
+    {
+        vol.Optional("device_id"): cv.string,
+        vol.Optional("station_id"): cv.string,
     }
 )
 
@@ -124,12 +133,7 @@ _SERVICES: list[tuple[str, vol.Schema, _Handler]] = [
         lambda api, d: api.async_get_low_top(d["prodcd"], d.get("area"), d.get("cnt")),
     ),
     # ⑨ 반경 내 주유소 검색 → get_around 로 별도 등록(위경도→KATEC 변환 필요)
-    # ⑩ 주유소 상세정보(ID)
-    (
-        "get_station_detail",
-        vol.Schema({vol.Required("station_id"): cv.string}),
-        lambda api, d: _as_list(api.async_detail_by_id(d["station_id"])),
-    ),
+    # ⑩ 주유소 상세정보 → get_station_detail 로 별도 등록(등록 주유소 선택 지원)
     # ⑪ 상호로 주유소 검색
     (
         "search_station",
@@ -219,9 +223,16 @@ _SERVICES: list[tuple[str, vol.Schema, _Handler]] = [
 ]
 
 
-async def _as_list(coro: Awaitable[dict[str, Any]]) -> list[dict[str, Any]]:
-    """detailById 처럼 단건을 반환하는 호출을 목록 형태로 감싼다."""
-    return [await coro]
+def _station_id_from_device(hass: HomeAssistant, device_id: str) -> str:
+    """선택한 기기(등록된 주유소)에서 주유소 ID를 추출한다."""
+    device = dr.async_get(hass).async_get(device_id)
+    if device is None:
+        raise HomeAssistantError(f"기기 {device_id} 를 찾을 수 없습니다.")
+    for domain, identifier in device.identifiers:
+        # 주유소 기기 식별자는 (DOMAIN, 주유소ID). 전국평균 기기(_avg)는 제외.
+        if domain == DOMAIN and not identifier.endswith("_avg"):
+            return identifier
+    raise HomeAssistantError("선택한 기기에서 주유소 ID를 찾을 수 없습니다.")
 
 
 def _get_api(hass: HomeAssistant) -> OpinetApi:
@@ -314,11 +325,38 @@ def async_setup_services(hass: HomeAssistant) -> None:
             supports_response=SupportsResponse.ONLY,
         )
 
+    # ⑩ 주유소 상세정보: 등록된 주유소(기기)를 선택하거나 ID 직접 입력.
+    async def _station_detail(call: ServiceCall) -> ServiceResponse:
+        api = _get_api(hass)
+        station_id = call.data.get("station_id")
+        device_id = call.data.get("device_id")
+        if not station_id and device_id:
+            station_id = _station_id_from_device(hass, device_id)
+        if not station_id:
+            raise HomeAssistantError("주유소를 선택하거나 주유소 ID를 입력하세요.")
+        try:
+            detail = await api.async_detail_by_id(station_id)
+        except OpinetError as err:
+            raise HomeAssistantError(f"Opinet 요청 실패: {err}") from err
+        return {"oil": [detail]}
+
+    if not hass.services.has_service(DOMAIN, SERVICE_GET_STATION_DETAIL):
+        hass.services.async_register(
+            DOMAIN,
+            SERVICE_GET_STATION_DETAIL,
+            _station_detail,
+            schema=_GET_STATION_DETAIL_SCHEMA,
+            supports_response=SupportsResponse.ONLY,
+        )
+
 
 @callback
 def async_unload_services(hass: HomeAssistant) -> None:
     """등록한 서비스를 제거한다."""
-    names = [name for name, _s, _h in _SERVICES] + [SERVICE_GET_AROUND]
+    names = [name for name, _s, _h in _SERVICES] + [
+        SERVICE_GET_AROUND,
+        SERVICE_GET_STATION_DETAIL,
+    ]
     for name in names:
         if hass.services.has_service(DOMAIN, name):
             hass.services.async_remove(DOMAIN, name)

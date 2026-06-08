@@ -158,8 +158,13 @@ get_around:
 
 get_station_detail:
   fields:
+    device_id:
+      selector:
+        device:
+          filter:
+            - integration: opinet
+              model: Gas station
     station_id:
-      required: true
       example: "A0019752"
       selector:
         text:

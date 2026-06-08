@@ -228,9 +228,13 @@
       "name": "Station detail (ID)",
       "description": "Station detail/prices by ID.",
       "fields": {
+        "device_id": {
+          "name": "Gas station (registered)",
+          "description": "Pick a registered station (or enter an ID below)"
+        },
         "station_id": {
           "name": "Station ID",
-          "description": "e.g. A0019752"
+          "description": "Used when entered directly (e.g. A0019752). Ignored if a station is selected"
         }
       }
     },
