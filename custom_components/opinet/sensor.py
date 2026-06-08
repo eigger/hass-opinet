@@ -62,9 +62,9 @@ async def async_setup_entry(
 
 
 def _avg_device_info(entry_id: str) -> DeviceInfo:
-    """현재/일일/주간 전국 평균 센서가 공유하는 기기 (이름은 번역됨)."""
+    """현재/일일/주간 전국 평균 센서가 공유하는 허브 기기 (이름은 번역됨)."""
     return DeviceInfo(
-        identifiers={(DOMAIN, f"{entry_id}_avg")},
+        identifiers={(DOMAIN, entry_id)},
         translation_key="nationwide_average",
         manufacturer="Korea National Oil Corporation (Opinet)",
         model="Nationwide average price",

@@ -228,9 +228,14 @@ def _station_id_from_device(hass: HomeAssistant, device_id: str) -> str:
     device = dr.async_get(hass).async_get(device_id)
     if device is None:
         raise HomeAssistantError(f"기기 {device_id} 를 찾을 수 없습니다.")
+    # 허브(entry_id)·주유소 그룹(entry_id_stations) 식별자는 제외.
+    excluded: set[str] = set()
+    for entry_id in device.config_entries:
+        excluded.add(entry_id)
+        excluded.add(f"{entry_id}_stations")
     for domain, identifier in device.identifiers:
-        # 주유소 기기 식별자는 (DOMAIN, 주유소ID). 전국평균 기기(_avg)는 제외.
-        if domain == DOMAIN and not identifier.endswith("_avg"):
+        # 주유소 기기 식별자는 (DOMAIN, 주유소ID).
+        if domain == DOMAIN and identifier not in excluded:
             return identifier
     raise HomeAssistantError("선택한 기기에서 주유소 ID를 찾을 수 없습니다.")
 

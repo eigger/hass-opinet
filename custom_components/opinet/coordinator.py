@@ -246,15 +246,17 @@ class OpinetStationCoordinator(OpinetScheduledCoordinator):
 
     @property
     def device_info(self) -> DeviceInfo:
-        """주유소 기기 정보. 제조사(manufacturer)에 정유사(상표)를 넣는다."""
+        """주유소 기기 정보. 제조사=정유사(상표), '주유소' 그룹 기기 밑에 묶인다."""
         data = self.data or {}
         refiner = BRANDS.get(data.get("brand", ""), data.get("brand"))
+        entry_id = self.config_entry.entry_id if self.config_entry else ""
         return DeviceInfo(
             identifiers={(DOMAIN, self.station_id)},
             # 기기 이름은 실제 주유소 상호(데이터) — 라벨이 아니므로 그대로 사용.
             name=data.get("name") or self.station_id,
             manufacturer=refiner or None,
             model="Gas station",
+            via_device=(DOMAIN, f"{entry_id}_stations"),
         )
 
     async def _async_update_data(self) -> dict[str, Any]:

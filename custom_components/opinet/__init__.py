@@ -8,6 +8,7 @@ import logging
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .api import OpinetApi
@@ -90,12 +91,41 @@ async def async_setup_entry(hass: HomeAssistant, entry: OpinetConfigEntry) -> bo
         station_coordinators=station_coordinators,
     )
 
+    _async_setup_devices(hass, entry, bool(station_coordinators))
+
     # 데이터 조회용 서비스(전 API)를 1회만 등록한다.
     async_setup_services(hass)
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     entry.async_on_unload(entry.add_update_listener(_async_update_listener))
     return True
+
+
+def _async_setup_devices(
+    hass: HomeAssistant, entry: OpinetConfigEntry, has_stations: bool
+) -> None:
+    """기기 계층을 만든다.
+
+    오피넷 전국 평균 유가 정보(허브) ─ 주유소(서브 기기) ─ 각 주유소.
+    via_device 가 참조하는 부모가 먼저 존재해야 하므로 여기서 미리 생성한다.
+    """
+    device_reg = dr.async_get(hass)
+    # 허브: 전국 평균 센서가 올라가는 기기이자 주유소들의 부모.
+    device_reg.async_get_or_create(
+        config_entry_id=entry.entry_id,
+        identifiers={(DOMAIN, entry.entry_id)},
+        translation_key="nationwide_average",
+        manufacturer="Korea National Oil Corporation (Opinet)",
+        model="Nationwide average price",
+    )
+    # 주유소 그룹(서브 기기): 추가된 주유소 기기들이 이 밑으로 묶인다.
+    if has_stations:
+        device_reg.async_get_or_create(
+            config_entry_id=entry.entry_id,
+            identifiers={(DOMAIN, f"{entry.entry_id}_stations")},
+            translation_key="stations",
+            via_device=(DOMAIN, entry.entry_id),
+        )
 
 
 async def _async_update_listener(

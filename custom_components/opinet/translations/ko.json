@@ -461,7 +461,10 @@
   },
   "device": {
     "nationwide_average": {
-      "name": "오피넷 전국 평균"
+      "name": "오피넷 전국 평균 유가 정보"
+    },
+    "stations": {
+      "name": "주유소"
     }
   },
   "selector": {
