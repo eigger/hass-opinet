@@ -24,6 +24,7 @@ from .const import (
     WEEKLY_UPDATE_HOURS,
     WEEKLY_UPDATE_WEEKDAY,
 )
+from .geo import katec_to_wgs84
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -250,6 +251,16 @@ class OpinetStationCoordinator(OpinetScheduledCoordinator):
                 "trade_tm": item.get("TRADE_TM"),
             }
 
+        # KATEC 좌표 → 위경도(WGS84) 변환 (pyproj는 블로킹이라 executor 에서).
+        gis_x = _to_float(detail.get("GIS_X_COOR"))
+        gis_y = _to_float(detail.get("GIS_Y_COOR"))
+        latitude: float | None = None
+        longitude: float | None = None
+        if gis_x is not None and gis_y is not None:
+            latitude, longitude = await self.hass.async_add_executor_job(
+                katec_to_wgs84, gis_x, gis_y
+            )
+
         return {
             "uni_id": detail.get("UNI_ID", self.station_id),
             "name": detail.get("OS_NM"),
@@ -261,5 +272,9 @@ class OpinetStationCoordinator(OpinetScheduledCoordinator):
             "car_wash_yn": detail.get("CAR_WASH_YN"),
             "maint_yn": detail.get("MAINT_YN"),
             "cvs_yn": detail.get("CVS_YN"),
+            "gis_x": gis_x,
+            "gis_y": gis_y,
+            "latitude": latitude,
+            "longitude": longitude,
             "prices": prices,
         }

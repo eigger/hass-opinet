@@ -27,7 +27,21 @@ def _transformer():  # type: ignore[no-untyped-def]
     return Transformer.from_crs("EPSG:4326", _KATEC_PROJ, always_xy=True)
 
 
+@lru_cache(maxsize=1)
+def _inverse_transformer():  # type: ignore[no-untyped-def]
+    """KATEC → WGS84 역변환기 (lazy import → executor 안에서만 호출)."""
+    from pyproj import Transformer
+
+    return Transformer.from_crs(_KATEC_PROJ, "EPSG:4326", always_xy=True)
+
+
 def wgs84_to_katec(latitude: float, longitude: float) -> tuple[float, float]:
     """위경도(WGS84)를 KATEC (x=동거리, y=북거리) 로 변환한다."""
     x, y = _transformer().transform(longitude, latitude)
     return x, y
+
+
+def katec_to_wgs84(x: float, y: float) -> tuple[float, float]:
+    """KATEC (x=동거리, y=북거리) 를 위경도(WGS84, lat, lon) 로 변환한다."""
+    longitude, latitude = _inverse_transformer().transform(x, y)
+    return latitude, longitude

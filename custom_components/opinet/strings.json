@@ -418,6 +418,9 @@
       },
       "station_k015": {
         "name": "자동차부탄"
+      },
+      "station_location": {
+        "name": "위치"
       }
     }
   },
