@@ -462,9 +462,6 @@
   "device": {
     "nationwide_average": {
       "name": "Opinet average fuel prices"
-    },
-    "stations": {
-      "name": "Gas stations"
     }
   },
   "selector": {
