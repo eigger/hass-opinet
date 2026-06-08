@@ -1,0 +1,488 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "오피넷 유가정보",
+        "description": "한국석유공사 오피넷에서 발급받은 API 키를 입력하세요.",
+        "data": {
+          "api_key": "API 키"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "API 키가 올바르지 않습니다.",
+      "cannot_connect": "오피넷에 연결할 수 없습니다.",
+      "unknown": "알 수 없는 오류가 발생했습니다."
+    },
+    "abort": {
+      "already_configured": "이미 등록된 API 키입니다."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "옵션",
+        "description": "오피넷 서버는 정시에 가격을 갱신합니다. 그 직후 갱신 전 값을 받지 않도록, 정시 이후 몇 분 뒤에 조회할지 설정합니다.",
+        "data": {
+          "refresh_offset": "갱신 지연(분)"
+        }
+      }
+    }
+  },
+  "config_subentries": {
+    "station": {
+      "title": "주유소",
+      "step": {
+        "user": {
+          "title": "주유소 추가",
+          "menu_options": {
+            "search": "이름으로 검색",
+            "by_id": "주유소 ID로 추가"
+          }
+        },
+        "search": {
+          "title": "주유소 이름 검색",
+          "description": "주유소 상호를 두 글자 이상 입력하세요. 지역을 선택하면 검색 범위를 좁힐 수 있습니다.",
+          "data": {
+            "osnm": "주유소 이름(상호)",
+            "area": "지역(시도)"
+          }
+        },
+        "select": {
+          "title": "주유소 선택",
+          "description": "검색된 주유소 중 추가할 곳을 선택하세요.",
+          "data": {
+            "station_id": "주유소"
+          }
+        },
+        "by_id": {
+          "title": "주유소 ID 입력",
+          "description": "오피넷 주유소 ID(예: A0019752)를 입력하세요.",
+          "data": {
+            "station_id": "주유소 ID"
+          }
+        }
+      },
+      "error": {
+        "invalid_auth": "API 키가 올바르지 않습니다.",
+        "cannot_connect": "오피넷에 연결할 수 없습니다.",
+        "no_results": "검색 결과가 없습니다.",
+        "not_found": "해당 ID의 주유소를 찾을 수 없습니다."
+      },
+      "abort": {
+        "already_configured": "이미 추가된 주유소입니다."
+      }
+    }
+  },
+  "services": {
+    "get_avg_all_price": {
+      "name": "전국 평균가격(현재)",
+      "description": "현재 게시중인 전국 주유소 평균가격을 조회합니다.",
+      "fields": {}
+    },
+    "get_avg_sido_price": {
+      "name": "시도별 평균가격(현재)",
+      "description": "시도별 평균가격을 조회합니다.",
+      "fields": {
+        "sido": {
+          "name": "시도코드",
+          "description": "2자리 시도코드(미입력시 전체)"
+        },
+        "prodcd": {
+          "name": "제품코드",
+          "description": "B027:보통휘발유, B034:고급휘발유, D047:자동차경유, C004:실내등유, K015:자동차부탄 (미입력시 전체)"
+        }
+      }
+    },
+    "get_avg_sigun_price": {
+      "name": "시군구별 평균가격(현재)",
+      "description": "시군구별 평균가격을 조회합니다.",
+      "fields": {
+        "sido": {
+          "name": "시도코드",
+          "description": "2자리 시도코드(필수)"
+        },
+        "sigun": {
+          "name": "시군코드",
+          "description": "4자리 시군코드(미입력시 전체)"
+        },
+        "prodcd": {
+          "name": "제품코드",
+          "description": "B027:보통휘발유, B034:고급휘발유, D047:자동차경유, C004:실내등유, K015:자동차부탄"
+        }
+      }
+    },
+    "get_avg_recent_price": {
+      "name": "최근 7일 전국 일일 평균가격",
+      "description": "전일부터 7일간 전국 일일 평균가격.",
+      "fields": {
+        "date": {
+          "name": "기준일자",
+          "description": "YYYYMMDD(미입력시 7일 전체)"
+        },
+        "prodcd": {
+          "name": "제품코드",
+          "description": "B027:보통휘발유, B034:고급휘발유, D047:자동차경유, C004:실내등유, K015:자동차부탄"
+        }
+      }
+    },
+    "get_poll_avg_recent_price": {
+      "name": "최근 7일 상표별 평균가격",
+      "description": "전일부터 7일간 전국 일일 상표별 평균가격.",
+      "fields": {
+        "prodcd": {
+          "name": "제품코드",
+          "description": "B027:보통휘발유, B034:고급휘발유, D047:자동차경유, C004:실내등유, K015:자동차부탄"
+        },
+        "pollcd": {
+          "name": "상표코드",
+          "description": "SKE,GSC,HDO,SOL,RTE,RTX,NHO,SKG,E1G,ETC"
+        }
+      }
+    },
+    "get_area_avg_recent_price": {
+      "name": "최근 7일 지역별 평균가격",
+      "description": "전일부터 7일간 전국 일일 지역별 평균가격.",
+      "fields": {
+        "area": {
+          "name": "지역코드",
+          "description": "시도2자리/시군4자리(필수)"
+        },
+        "date": {
+          "name": "기준일자",
+          "description": "YYYYMMDD"
+        },
+        "prodcd": {
+          "name": "제품코드",
+          "description": "B027:보통휘발유, B034:고급휘발유, D047:자동차경유, C004:실내등유, K015:자동차부탄"
+        }
+      }
+    },
+    "get_avg_last_week": {
+      "name": "최근 1주 주간 평균유가",
+      "description": "전국/시도별 주간 평균유가.",
+      "fields": {
+        "prodcd": {
+          "name": "제품코드",
+          "description": "B027:보통휘발유, B034:고급휘발유, D047:자동차경유, C004:실내등유, K015:자동차부탄"
+        },
+        "sido": {
+          "name": "시도코드",
+          "description": "2자리(미입력시 전국)"
+        }
+      }
+    },
+    "get_low_top": {
+      "name": "최저가 주유소(TOP20)",
+      "description": "전국/지역별 최저가 주유소.",
+      "fields": {
+        "prodcd": {
+          "name": "제품코드",
+          "description": "B027:보통휘발유, B034:고급휘발유, D047:자동차경유, C004:실내등유, K015:자동차부탄 (필수)"
+        },
+        "area": {
+          "name": "지역코드",
+          "description": "시도2자리/시군4자리(미입력시 전국)"
+        },
+        "cnt": {
+          "name": "건수",
+          "description": "1~20(기본 10)"
+        }
+      }
+    },
+    "get_around": {
+      "name": "반경 내 주유소",
+      "description": "좌표 중심 반경 내 주유소.",
+      "fields": {
+        "entity_id": {
+          "name": "위치 엔티티",
+          "description": "device_tracker/person/zone (미지정 시 위경도 또는 홈 사용)"
+        },
+        "latitude": {
+          "name": "위도",
+          "description": "엔티티 미지정 시 사용 (둘 다 미지정 시 홈 좌표)"
+        },
+        "longitude": {
+          "name": "경도",
+          "description": "엔티티 미지정 시 사용 (둘 다 미지정 시 홈 좌표)"
+        },
+        "radius": {
+          "name": "반경(m)",
+          "description": "최대 5000(필수)"
+        },
+        "prodcd": {
+          "name": "제품",
+          "description": ""
+        },
+        "sort": {
+          "name": "정렬",
+          "description": ""
+        }
+      }
+    },
+    "get_station_detail": {
+      "name": "주유소 상세정보(ID)",
+      "description": "주유소 ID로 상세/가격 조회.",
+      "fields": {
+        "station_id": {
+          "name": "주유소 ID",
+          "description": "예: A0019752"
+        }
+      }
+    },
+    "search_station": {
+      "name": "상호로 주유소 검색",
+      "description": "상호 검색어(2글자 이상)로 주유소 조회.",
+      "fields": {
+        "osnm": {
+          "name": "상호 검색어",
+          "description": "2글자 이상"
+        },
+        "area": {
+          "name": "지역코드",
+          "description": "시도2자리(미입력시 전국)"
+        }
+      }
+    },
+    "get_taxfree_avg_recent_price": {
+      "name": "최근 7일 면세유 평균가격",
+      "description": "전국 일일 면세유 평균가격.",
+      "fields": {
+        "prodcd": {
+          "name": "제품코드",
+          "description": "B127:면세휘발유, D147:면세경유, C104:면세등유"
+        }
+      }
+    },
+    "get_taxfree_poll_avg_recent_price": {
+      "name": "최근 7일 상표별 면세유 평균가격",
+      "description": "전국 일일 상표별 면세유 평균가격.",
+      "fields": {
+        "prodcd": {
+          "name": "제품코드",
+          "description": "B127:면세휘발유, D147:면세경유, C104:면세등유"
+        },
+        "pollcd": {
+          "name": "상표코드",
+          "description": "SKE,GSC,HDO,SOL,RTE,RTX,NHO,SKG,E1G,ETC"
+        }
+      }
+    },
+    "get_taxfree_low_top": {
+      "name": "최저가 면세유 주유소(TOP20)",
+      "description": "전국/지역별 최저가 면세유 주유소.",
+      "fields": {
+        "prodcd": {
+          "name": "제품코드",
+          "description": "B127:면세휘발유, D147:면세경유, C104:면세등유 (필수)"
+        },
+        "area": {
+          "name": "지역코드",
+          "description": "시도2자리/시군4자리"
+        },
+        "cnt": {
+          "name": "건수",
+          "description": "1~20(기본 10)"
+        }
+      }
+    },
+    "get_urea_price": {
+      "name": "요소수 판매가격",
+      "description": "지역별 요소수 재고/판매단가.",
+      "fields": {
+        "area": {
+          "name": "지역코드",
+          "description": "시도2자리(필수)"
+        }
+      }
+    },
+    "get_area_code": {
+      "name": "지역코드 조회",
+      "description": "시도/시군구 지역코드 조회.",
+      "fields": {
+        "area": {
+          "name": "지역코드",
+          "description": "미입력시 시도, 시도코드 입력시 시군구"
+        }
+      }
+    },
+    "get_date_avg_recent_price": {
+      "name": "특정 7일 전국 일일 평균가격",
+      "description": "특정일자부터 7일간 전국 일일 평균가격.",
+      "fields": {
+        "date": {
+          "name": "기준일자",
+          "description": "YYYYMMDD(필수)"
+        },
+        "prodcd": {
+          "name": "제품코드",
+          "description": "B027:보통휘발유, B034:고급휘발유, D047:자동차경유, C004:실내등유, K015:자동차부탄"
+        }
+      }
+    },
+    "get_date_poll_avg_recent_price": {
+      "name": "특정 7일 상표별 평균가격",
+      "description": "특정일자부터 7일간 전국 일일 상표별 평균가격.",
+      "fields": {
+        "date": {
+          "name": "기준일자",
+          "description": "YYYYMMDD(필수)"
+        },
+        "prodcd": {
+          "name": "제품코드",
+          "description": "B027:보통휘발유, B034:고급휘발유, D047:자동차경유, C004:실내등유, K015:자동차부탄"
+        },
+        "pollcd": {
+          "name": "상표코드",
+          "description": "SKE,GSC,HDO,SOL,RTE,RTX,NHO,SKG,E1G,ETC"
+        }
+      }
+    },
+    "get_date_area_avg_recent_price": {
+      "name": "특정 7일 지역별 평균가격",
+      "description": "특정일자부터 7일간 전국 일일 지역별 평균가격.",
+      "fields": {
+        "area": {
+          "name": "지역코드",
+          "description": "시도2자리/시군4자리(필수)"
+        },
+        "date": {
+          "name": "기준일자",
+          "description": "YYYYMMDD(필수)"
+        },
+        "prodcd": {
+          "name": "제품코드",
+          "description": "B027:보통휘발유, B034:고급휘발유, D047:자동차경유, C004:실내등유, K015:자동차부탄"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "avg_current_b027": {
+        "name": "현재 보통휘발유"
+      },
+      "avg_current_b034": {
+        "name": "현재 고급휘발유"
+      },
+      "avg_current_d047": {
+        "name": "현재 자동차경유"
+      },
+      "avg_current_c004": {
+        "name": "현재 실내등유"
+      },
+      "avg_current_k015": {
+        "name": "현재 자동차부탄"
+      },
+      "avg_daily_b027": {
+        "name": "일일 보통휘발유"
+      },
+      "avg_daily_b034": {
+        "name": "일일 고급휘발유"
+      },
+      "avg_daily_d047": {
+        "name": "일일 자동차경유"
+      },
+      "avg_daily_c004": {
+        "name": "일일 실내등유"
+      },
+      "avg_daily_k015": {
+        "name": "일일 자동차부탄"
+      },
+      "avg_weekly_b027": {
+        "name": "주간 보통휘발유"
+      },
+      "avg_weekly_b034": {
+        "name": "주간 고급휘발유"
+      },
+      "avg_weekly_d047": {
+        "name": "주간 자동차경유"
+      },
+      "avg_weekly_c004": {
+        "name": "주간 실내등유"
+      },
+      "avg_weekly_k015": {
+        "name": "주간 자동차부탄"
+      },
+      "station_b027": {
+        "name": "보통휘발유"
+      },
+      "station_b034": {
+        "name": "고급휘발유"
+      },
+      "station_d047": {
+        "name": "자동차경유"
+      },
+      "station_c004": {
+        "name": "실내등유"
+      },
+      "station_k015": {
+        "name": "자동차부탄"
+      }
+    }
+  },
+  "device": {
+    "nationwide_average": {
+      "name": "오피넷 전국 평균"
+    }
+  },
+  "selector": {
+    "product": {
+      "options": {
+        "B027": "보통휘발유",
+        "B034": "고급휘발유",
+        "D047": "자동차경유",
+        "C004": "실내등유",
+        "K015": "자동차부탄"
+      }
+    },
+    "taxfree_product": {
+      "options": {
+        "B127": "면세휘발유",
+        "D147": "면세경유",
+        "C104": "면세등유"
+      }
+    },
+    "brand": {
+      "options": {
+        "SKE": "SK에너지",
+        "GSC": "GS칼텍스",
+        "HDO": "현대오일뱅크",
+        "SOL": "S-OIL",
+        "RTE": "자영알뜰",
+        "RTX": "고속도로알뜰",
+        "NHO": "농협알뜰",
+        "SKG": "SK가스",
+        "E1G": "E1",
+        "ETC": "자가상표"
+      }
+    },
+    "area": {
+      "options": {
+        "01": "서울",
+        "02": "경기",
+        "03": "강원",
+        "04": "충북",
+        "05": "충남",
+        "06": "전북",
+        "07": "전남",
+        "08": "경북",
+        "09": "경남",
+        "10": "부산",
+        "11": "제주",
+        "14": "대구",
+        "15": "인천",
+        "16": "광주",
+        "17": "대전",
+        "18": "울산",
+        "19": "세종"
+      }
+    },
+    "sort": {
+      "options": {
+        "1": "가격순",
+        "2": "거리순"
+      }
+    }
+  }
+}

@@ -1,0 +1,287 @@
+# 코드 대신 명칭(select)으로 입력받고, 값으로는 오피넷 코드가 전달된다.
+# 라벨은 strings.json 의 selector 블록에서 번역된다.
+
+get_avg_all_price:
+
+get_avg_sido_price:
+  fields:
+    sido:
+      selector:
+        select:
+          translation_key: area
+          options: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "14", "15", "16", "17", "18", "19"]
+    prodcd:
+      selector:
+        select:
+          translation_key: product
+          options: ["B027", "B034", "D047", "C004", "K015"]
+
+get_avg_sigun_price:
+  fields:
+    sido:
+      required: true
+      selector:
+        select:
+          translation_key: area
+          options: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "14", "15", "16", "17", "18", "19"]
+    sigun:
+      example: "0101"
+      selector:
+        text:
+    prodcd:
+      selector:
+        select:
+          translation_key: product
+          options: ["B027", "B034", "D047", "C004", "K015"]
+
+get_avg_recent_price:
+  fields:
+    date:
+      example: "20260601"
+      selector:
+        text:
+    prodcd:
+      selector:
+        select:
+          translation_key: product
+          options: ["B027", "B034", "D047", "C004", "K015"]
+
+get_poll_avg_recent_price:
+  fields:
+    prodcd:
+      selector:
+        select:
+          translation_key: product
+          options: ["B027", "B034", "D047", "C004", "K015"]
+    pollcd:
+      selector:
+        select:
+          translation_key: brand
+          options: ["SKE", "GSC", "HDO", "SOL", "RTE", "RTX", "NHO", "SKG", "E1G", "ETC"]
+
+get_area_avg_recent_price:
+  fields:
+    area:
+      required: true
+      selector:
+        select:
+          translation_key: area
+          options: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "14", "15", "16", "17", "18", "19"]
+    date:
+      example: "20260601"
+      selector:
+        text:
+    prodcd:
+      selector:
+        select:
+          translation_key: product
+          options: ["B027", "B034", "D047", "C004", "K015"]
+
+get_avg_last_week:
+  fields:
+    prodcd:
+      selector:
+        select:
+          translation_key: product
+          options: ["B027", "B034", "D047", "C004", "K015"]
+    sido:
+      selector:
+        select:
+          translation_key: area
+          options: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "14", "15", "16", "17", "18", "19"]
+
+get_low_top:
+  fields:
+    prodcd:
+      required: true
+      selector:
+        select:
+          translation_key: product
+          options: ["B027", "B034", "D047", "C004", "K015"]
+    area:
+      selector:
+        select:
+          translation_key: area
+          options: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "14", "15", "16", "17", "18", "19"]
+    cnt:
+      example: 10
+      selector:
+        number:
+          min: 1
+          max: 20
+          mode: box
+
+get_around:
+  fields:
+    entity_id:
+      selector:
+        entity:
+          domain:
+            - device_tracker
+            - person
+            - zone
+    latitude:
+      example: 37.5665
+      selector:
+        number:
+          min: -90
+          max: 90
+          step: 0.000001
+          mode: box
+    longitude:
+      example: 126.978
+      selector:
+        number:
+          min: -180
+          max: 180
+          step: 0.000001
+          mode: box
+    radius:
+      required: true
+      example: 5000
+      selector:
+        number:
+          min: 1
+          max: 5000
+          mode: box
+    prodcd:
+      required: true
+      selector:
+        select:
+          translation_key: product
+          options: ["B027", "B034", "D047", "C004", "K015"]
+    sort:
+      selector:
+        select:
+          translation_key: sort
+          options: ["1", "2"]
+
+get_station_detail:
+  fields:
+    station_id:
+      required: true
+      example: "A0019752"
+      selector:
+        text:
+
+search_station:
+  fields:
+    osnm:
+      required: true
+      example: "보라매"
+      selector:
+        text:
+    area:
+      selector:
+        select:
+          translation_key: area
+          options: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "14", "15", "16", "17", "18", "19"]
+
+get_taxfree_avg_recent_price:
+  fields:
+    prodcd:
+      selector:
+        select:
+          translation_key: taxfree_product
+          options: ["B127", "D147", "C104"]
+
+get_taxfree_poll_avg_recent_price:
+  fields:
+    prodcd:
+      selector:
+        select:
+          translation_key: taxfree_product
+          options: ["B127", "D147", "C104"]
+    pollcd:
+      selector:
+        select:
+          translation_key: brand
+          options: ["SKE", "GSC", "HDO", "SOL", "RTE", "RTX", "NHO", "SKG", "E1G", "ETC"]
+
+get_taxfree_low_top:
+  fields:
+    prodcd:
+      required: true
+      selector:
+        select:
+          translation_key: taxfree_product
+          options: ["B127", "D147", "C104"]
+    area:
+      selector:
+        select:
+          translation_key: area
+          options: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "14", "15", "16", "17", "18", "19"]
+    cnt:
+      example: 10
+      selector:
+        number:
+          min: 1
+          max: 20
+          mode: box
+
+get_urea_price:
+  fields:
+    area:
+      required: true
+      selector:
+        select:
+          translation_key: area
+          options: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "14", "15", "16", "17", "18", "19"]
+
+get_area_code:
+  fields:
+    area:
+      selector:
+        select:
+          translation_key: area
+          options: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "14", "15", "16", "17", "18", "19"]
+
+get_date_avg_recent_price:
+  fields:
+    date:
+      required: true
+      example: "20260601"
+      selector:
+        text:
+    prodcd:
+      selector:
+        select:
+          translation_key: product
+          options: ["B027", "B034", "D047", "C004", "K015"]
+
+get_date_poll_avg_recent_price:
+  fields:
+    date:
+      required: true
+      example: "20260601"
+      selector:
+        text:
+    prodcd:
+      selector:
+        select:
+          translation_key: product
+          options: ["B027", "B034", "D047", "C004", "K015"]
+    pollcd:
+      selector:
+        select:
+          translation_key: brand
+          options: ["SKE", "GSC", "HDO", "SOL", "RTE", "RTX", "NHO", "SKG", "E1G", "ETC"]
+
+get_date_area_avg_recent_price:
+  fields:
+    area:
+      required: true
+      selector:
+        select:
+          translation_key: area
+          options: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "14", "15", "16", "17", "18", "19"]
+    date:
+      required: true
+      example: "20260601"
+      selector:
+        text:
+    prodcd:
+      selector:
+        select:
+          translation_key: product
+          options: ["B027", "B034", "D047", "C004", "K015"]
