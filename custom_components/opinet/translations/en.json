@@ -3,14 +3,14 @@
     "step": {
       "user": {
         "title": "Opinet Fuel Prices",
-        "description": "Enter the API key issued by KNOC Opinet.",
+        "description": "Enter the API key issued by KNOC Opinet. [Apply for a free API key](https://www.opinet.co.kr/user/custapi/custApiInfo.do)",
         "data": {
           "api_key": "API key"
         }
       },
       "reauth_confirm": {
         "title": "Reauthenticate Opinet",
-        "description": "The API key is no longer valid. Enter a new API key.",
+        "description": "The API key is no longer valid. Enter a new API key. [Apply for a free API key](https://www.opinet.co.kr/user/custapi/custApiInfo.do)",
         "data": {
           "api_key": "API key"
         }
