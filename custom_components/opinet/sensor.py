@@ -236,6 +236,7 @@ class OpinetStationSensor(
     _attr_has_entity_name = True
     _attr_native_unit_of_measurement = PRICE_UNIT
     _attr_state_class = SensorStateClass.MEASUREMENT
+    _attr_suggested_display_precision = 0
     _attr_icon = "mdi:gas-station"
 
     def __init__(
