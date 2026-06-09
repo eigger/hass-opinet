@@ -1,4 +1,10 @@
-# Opinet 유가정보 (Home Assistant)
+# Opinet 유가정보 Home Assistant Integration (hass-opinet)
+
+[![GitHub Release](https://img.shields.io/github/v/release/eigger/hass-opinet?style=flat-square)](https://github.com/eigger/hass-opinet/releases)
+[![License](https://img.shields.io/github/license/eigger/hass-opinet?style=flat-square)](LICENSE)
+[![HACS](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
+![integration usage](https://img.shields.io/badge/dynamic/json?color=41BDF5&logo=home-assistant&label=usage&suffix=%20installs&cacheSeconds=15600&query=%24.opinet.total&url=https%3A%2F%2Fanalytics.home-assistant.io%2Fcustom_integrations.json)
+
 
 한국석유공사 **오피넷(Opinet) 일반 API**를 사용해 유가 정보를 가져오는 Home Assistant 커스텀 통합구성요소입니다.
 
