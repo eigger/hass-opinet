@@ -46,6 +46,12 @@ class OpinetStationTracker(
         return SourceType.GPS
 
     @property
+    def location_name(self) -> str | None:
+        """Return address as the tracker state (instead of home/not_home)."""
+        data = self.coordinator.data or {}
+        return data.get("address") or data.get("name")
+
+    @property
     def latitude(self) -> float | None:
         return (self.coordinator.data or {}).get("latitude")
 
