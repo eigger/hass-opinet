@@ -39,11 +39,11 @@ API_BASE = "https://www.opinet.co.kr/api"
 
 # Product codes used by avgAllPrice.do / detailById.do.
 PRODUCTS: dict[str, str] = {
-    "B027": "보통휘발유",
+    "B027": "휘발유",
     "B034": "고급휘발유",
-    "D047": "자동차경유",
-    "C004": "실내등유",
-    "K015": "자동차부탄(LPG)",
+    "D047": "경유",
+    "C004": "등유",
+    "K015": "LPG",
 }
 
 # 면세유 제품코드.
