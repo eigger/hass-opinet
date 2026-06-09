@@ -1,0 +1,544 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Opinet Fuel Prices",
+        "description": "Enter the API key issued by KNOC Opinet.",
+        "data": {
+          "api_key": "API key"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Reauthenticate Opinet",
+        "description": "The API key is no longer valid. Enter a new API key.",
+        "data": {
+          "api_key": "API key"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "The API key is invalid.",
+      "cannot_connect": "Failed to connect to Opinet.",
+      "unknown": "An unexpected error occurred."
+    },
+    "abort": {
+      "already_configured": "This API key is already configured.",
+      "reauth_successful": "Re-authentication was successful."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options",
+        "description": "Opinet refreshes prices on the hour. To avoid reading stale values right after, set how many minutes past the hour to fetch.",
+        "data": {
+          "refresh_offset": "Refresh delay (minutes)"
+        }
+      }
+    }
+  },
+  "config_subentries": {
+    "station": {
+      "initiate_flow": {
+        "user": "Add gas station"
+      },
+      "entry_type": "Gas station",
+      "step": {
+        "user": {
+          "title": "Add a gas station",
+          "description": "Choose how to add a gas station.",
+          "menu_options": {
+            "search": "Search by name",
+            "by_id": "Add by station ID"
+          }
+        },
+        "search": {
+          "title": "Search station by name",
+          "description": "Enter at least two characters of the station name. Pick a region to narrow the search.",
+          "data": {
+            "osnm": "Station name",
+            "area": "Region"
+          }
+        },
+        "select": {
+          "title": "Select a station",
+          "description": "Choose the station to add from the search results.",
+          "data": {
+            "station_id": "Station"
+          }
+        },
+        "by_id": {
+          "title": "Enter station ID",
+          "description": "Enter the Opinet station ID (e.g. A0019752).",
+          "data": {
+            "station_id": "Station ID"
+          }
+        }
+      },
+      "error": {
+        "invalid_auth": "The API key is invalid.",
+        "cannot_connect": "Failed to connect to Opinet.",
+        "no_results": "No stations found.",
+        "not_found": "No station found for that ID."
+      },
+      "abort": {
+        "already_configured": "This station is already added."
+      }
+    }
+  },
+  "services": {
+    "get_avg_all_price": {
+      "name": "Nationwide average (current)",
+      "description": "Current nationwide average fuel prices.",
+      "fields": {}
+    },
+    "get_avg_sido_price": {
+      "name": "Sido average (current)",
+      "description": "Average prices by province.",
+      "fields": {
+        "sido": {
+          "name": "Sido code",
+          "description": "2-digit (blank=all)"
+        },
+        "prodcd": {
+          "name": "Product code",
+          "description": "B027:보통휘발유, B034:고급휘발유, D047:자동차경유, C004:실내등유, K015:자동차부탄"
+        }
+      }
+    },
+    "get_avg_sigun_price": {
+      "name": "Sigungu average (current)",
+      "description": "Average prices by city/district.",
+      "fields": {
+        "sido": {
+          "name": "Sido code",
+          "description": "2-digit (required)"
+        },
+        "sigun": {
+          "name": "Sigun code",
+          "description": "4-digit (blank=all)"
+        },
+        "prodcd": {
+          "name": "Product code",
+          "description": "B027:보통휘발유, B034:고급휘발유, D047:자동차경유, C004:실내등유, K015:자동차부탄"
+        }
+      }
+    },
+    "get_avg_recent_price": {
+      "name": "Recent 7-day national daily avg",
+      "description": "National daily average for the last 7 days.",
+      "fields": {
+        "date": {
+          "name": "Date",
+          "description": "YYYYMMDD (blank=all 7 days)"
+        },
+        "prodcd": {
+          "name": "Product code",
+          "description": "B027:보통휘발유, B034:고급휘발유, D047:자동차경유, C004:실내등유, K015:자동차부탄"
+        }
+      }
+    },
+    "get_poll_avg_recent_price": {
+      "name": "Recent 7-day avg by brand",
+      "description": "National daily average by brand.",
+      "fields": {
+        "prodcd": {
+          "name": "Product code",
+          "description": "B027:보통휘발유, B034:고급휘발유, D047:자동차경유, C004:실내등유, K015:자동차부탄"
+        },
+        "pollcd": {
+          "name": "Brand code",
+          "description": "SKE,GSC,HDO,SOL,RTE,RTX,NHO,SKG,E1G,ETC"
+        }
+      }
+    },
+    "get_area_avg_recent_price": {
+      "name": "Recent 7-day avg by area",
+      "description": "National daily average by area.",
+      "fields": {
+        "area": {
+          "name": "Area code",
+          "description": "sido2/sigun4 (required)"
+        },
+        "date": {
+          "name": "Date",
+          "description": "YYYYMMDD"
+        },
+        "prodcd": {
+          "name": "Product code",
+          "description": "B027:보통휘발유, B034:고급휘발유, D047:자동차경유, C004:실내등유, K015:자동차부탄"
+        }
+      }
+    },
+    "get_avg_last_week": {
+      "name": "Last week weekly avg",
+      "description": "Weekly average (nation/province).",
+      "fields": {
+        "prodcd": {
+          "name": "Product code",
+          "description": "B027:보통휘발유, B034:고급휘발유, D047:자동차경유, C004:실내등유, K015:자동차부탄"
+        },
+        "sido": {
+          "name": "Sido code",
+          "description": "2-digit (blank=nation)"
+        }
+      }
+    },
+    "get_low_top": {
+      "name": "Cheapest stations (TOP20)",
+      "description": "Cheapest stations nationwide/by area.",
+      "fields": {
+        "prodcd": {
+          "name": "Product code",
+          "description": "B027:보통휘발유, B034:고급휘발유, D047:자동차경유, C004:실내등유, K015:자동차부탄 (required)"
+        },
+        "area": {
+          "name": "Area code",
+          "description": "sido2/sigun4 (blank=nation)"
+        },
+        "cnt": {
+          "name": "Count",
+          "description": "1-20 (default 10)"
+        }
+      }
+    },
+    "get_around": {
+      "name": "Stations within radius",
+      "description": "Stations within a radius of a point.",
+      "fields": {
+        "entity_id": {
+          "name": "Location entity",
+          "description": "device_tracker/person/zone (falls back to lat/lon or Home)"
+        },
+        "latitude": {
+          "name": "Latitude",
+          "description": "Used when no entity (falls back to Home if both empty)"
+        },
+        "longitude": {
+          "name": "Longitude",
+          "description": "Used when no entity (falls back to Home if both empty)"
+        },
+        "radius": {
+          "name": "Radius (m)",
+          "description": "max 5000 (required)"
+        },
+        "prodcd": {
+          "name": "Product",
+          "description": ""
+        },
+        "sort": {
+          "name": "Sort",
+          "description": ""
+        }
+      }
+    },
+    "get_station_detail": {
+      "name": "Station detail (ID)",
+      "description": "Station detail/prices by ID.",
+      "fields": {
+        "device_id": {
+          "name": "Gas station (registered)",
+          "description": "Pick a registered station (or enter an ID below)"
+        },
+        "station_id": {
+          "name": "Station ID",
+          "description": "Used when entered directly (e.g. A0019752). Ignored if a station is selected"
+        }
+      }
+    },
+    "search_station": {
+      "name": "Search station by name",
+      "description": "Search stations by name (>=2 chars).",
+      "fields": {
+        "osnm": {
+          "name": "Name query",
+          "description": ">=2 chars"
+        },
+        "area": {
+          "name": "Area code",
+          "description": "sido 2-digit (blank=nation)"
+        }
+      }
+    },
+    "get_taxfree_avg_recent_price": {
+      "name": "Recent 7-day tax-free avg",
+      "description": "National daily tax-free average.",
+      "fields": {
+        "prodcd": {
+          "name": "Product code",
+          "description": "B127:면세휘발유, D147:면세경유, C104:면세등유"
+        }
+      }
+    },
+    "get_taxfree_poll_avg_recent_price": {
+      "name": "Recent 7-day tax-free avg by brand",
+      "description": "National daily tax-free average by brand.",
+      "fields": {
+        "prodcd": {
+          "name": "Product code",
+          "description": "B127:면세휘발유, D147:면세경유, C104:면세등유"
+        },
+        "pollcd": {
+          "name": "Brand code",
+          "description": "SKE,GSC,HDO,SOL,RTE,RTX,NHO,SKG,E1G,ETC"
+        }
+      }
+    },
+    "get_taxfree_low_top": {
+      "name": "Cheapest tax-free stations (TOP20)",
+      "description": "Cheapest tax-free stations.",
+      "fields": {
+        "prodcd": {
+          "name": "Product code",
+          "description": "B127:면세휘발유, D147:면세경유, C104:면세등유 (required)"
+        },
+        "area": {
+          "name": "Area code",
+          "description": "sido2/sigun4"
+        },
+        "cnt": {
+          "name": "Count",
+          "description": "1-20 (default 10)"
+        }
+      }
+    },
+    "get_urea_price": {
+      "name": "Urea (DEF) prices",
+      "description": "Urea stock/price by area.",
+      "fields": {
+        "area": {
+          "name": "Area code",
+          "description": "sido 2-digit (required)"
+        }
+      }
+    },
+    "get_area_code": {
+      "name": "Area code lookup",
+      "description": "Look up sido/sigungu area codes.",
+      "fields": {
+        "area": {
+          "name": "Area code",
+          "description": "blank=sido, sido code=sigungu"
+        }
+      }
+    },
+    "get_date_avg_recent_price": {
+      "name": "Specific 7-day national daily avg",
+      "description": "National daily avg for 7 days from a date.",
+      "fields": {
+        "date": {
+          "name": "Date",
+          "description": "YYYYMMDD (required)"
+        },
+        "prodcd": {
+          "name": "Product code",
+          "description": "B027:보통휘발유, B034:고급휘발유, D047:자동차경유, C004:실내등유, K015:자동차부탄"
+        }
+      }
+    },
+    "get_date_poll_avg_recent_price": {
+      "name": "Specific 7-day avg by brand",
+      "description": "National daily avg by brand for 7 days from a date.",
+      "fields": {
+        "date": {
+          "name": "Date",
+          "description": "YYYYMMDD (required)"
+        },
+        "prodcd": {
+          "name": "Product code",
+          "description": "B027:보통휘발유, B034:고급휘발유, D047:자동차경유, C004:실내등유, K015:자동차부탄"
+        },
+        "pollcd": {
+          "name": "Brand code",
+          "description": "SKE,GSC,HDO,SOL,RTE,RTX,NHO,SKG,E1G,ETC"
+        }
+      }
+    },
+    "get_date_area_avg_recent_price": {
+      "name": "Specific 7-day avg by area",
+      "description": "National daily avg by area for 7 days from a date.",
+      "fields": {
+        "area": {
+          "name": "Area code",
+          "description": "sido2/sigun4 (required)"
+        },
+        "date": {
+          "name": "Date",
+          "description": "YYYYMMDD (required)"
+        },
+        "prodcd": {
+          "name": "Product code",
+          "description": "B027:보통휘발유, B034:고급휘발유, D047:자동차경유, C004:실내등유, K015:자동차부탄"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "avg_current_b027": {
+        "name": "Current regular gasoline"
+      },
+      "avg_current_b034": {
+        "name": "Current premium gasoline"
+      },
+      "avg_current_d047": {
+        "name": "Current diesel"
+      },
+      "avg_current_c004": {
+        "name": "Current kerosene"
+      },
+      "avg_current_k015": {
+        "name": "Current Auto LPG"
+      },
+      "avg_daily_b027": {
+        "name": "Daily regular gasoline"
+      },
+      "avg_daily_b034": {
+        "name": "Daily premium gasoline"
+      },
+      "avg_daily_d047": {
+        "name": "Daily diesel"
+      },
+      "avg_daily_c004": {
+        "name": "Daily kerosene"
+      },
+      "avg_daily_k015": {
+        "name": "Daily Auto LPG"
+      },
+      "avg_weekly_b027": {
+        "name": "Weekly regular gasoline"
+      },
+      "avg_weekly_b034": {
+        "name": "Weekly premium gasoline"
+      },
+      "avg_weekly_d047": {
+        "name": "Weekly diesel"
+      },
+      "avg_weekly_c004": {
+        "name": "Weekly kerosene"
+      },
+      "avg_weekly_k015": {
+        "name": "Weekly Auto LPG"
+      },
+      "station_b027": {
+        "name": "Regular gasoline"
+      },
+      "station_b034": {
+        "name": "Premium gasoline"
+      },
+      "station_d047": {
+        "name": "Diesel"
+      },
+      "station_c004": {
+        "name": "Kerosene"
+      },
+      "station_k015": {
+        "name": "Auto LPG"
+      },
+      "car_wash": {
+        "name": "Car wash",
+        "state": {
+          "yes": "Yes",
+          "no": "No"
+        }
+      },
+      "maintenance": {
+        "name": "Light maintenance",
+        "state": {
+          "yes": "Yes",
+          "no": "No"
+        }
+      },
+      "convenience_store": {
+        "name": "Convenience store",
+        "state": {
+          "yes": "Yes",
+          "no": "No"
+        }
+      },
+      "quality_certified": {
+        "name": "Quality-certified",
+        "state": {
+          "yes": "Yes",
+          "no": "No"
+        }
+      },
+      "good_station": {
+        "name": "Good (fair-price) station",
+        "state": {
+          "yes": "Yes",
+          "no": "No"
+        }
+      }
+    },
+    "device_tracker": {
+      "station_location": {
+        "name": "Location"
+      }
+    }
+  },
+  "device": {
+    "nationwide_average": {
+      "name": "Opinet average fuel prices"
+    }
+  },
+  "selector": {
+    "product": {
+      "options": {
+        "B027": "Regular gasoline",
+        "B034": "Premium gasoline",
+        "D047": "Diesel",
+        "C004": "Kerosene",
+        "K015": "Auto LPG"
+      }
+    },
+    "taxfree_product": {
+      "options": {
+        "B127": "Tax-free gasoline",
+        "D147": "Tax-free diesel",
+        "C104": "Tax-free kerosene"
+      }
+    },
+    "brand": {
+      "options": {
+        "SKE": "SK Energy",
+        "GSC": "GS Caltex",
+        "HDO": "Hyundai Oilbank",
+        "SOL": "S-OIL",
+        "RTE": "Self-employed Alddeul",
+        "RTX": "Highway Alddeul",
+        "NHO": "Nonghyup Alddeul",
+        "SKG": "SK Gas",
+        "E1G": "E1",
+        "ETC": "Private brand"
+      }
+    },
+    "area": {
+      "options": {
+        "01": "Seoul",
+        "02": "Gyeonggi",
+        "03": "Gangwon",
+        "04": "Chungbuk",
+        "05": "Chungnam",
+        "06": "Jeonbuk",
+        "07": "Jeonnam",
+        "08": "Gyeongbuk",
+        "09": "Gyeongnam",
+        "10": "Busan",
+        "11": "Jeju",
+        "14": "Daegu",
+        "15": "Incheon",
+        "16": "Gwangju",
+        "17": "Daejeon",
+        "18": "Ulsan",
+        "19": "Sejong"
+      }
+    },
+    "sort": {
+      "options": {
+        "1": "By price",
+        "2": "By distance"
+      }
+    }
+  }
+}
