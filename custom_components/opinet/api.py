@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+import json
 import logging
 from typing import Any
 
@@ -52,8 +53,11 @@ class OpinetApi:
         try:
             async with self._session.get(url, params=query) as resp:
                 resp.raise_for_status()
-                # Opinet serves JSON with a text/html content type.
-                data = await resp.json(content_type=None)
+                text = await resp.text()
+            # Opinet serves JSON with a text/html content type. 일부 엔드포인트
+            # (예: ureaPrice.do)는 PRICE/STOCK_YN 등 문자열 값 안에 escape 되지
+            # 않은 제어문자(\r\n)를 그대로 넣어 보내므로 strict=False 로 파싱한다.
+            data = json.loads(text, strict=False)
         except ClientError as err:
             raise OpinetConnectionError(f"Opinet request failed: {err}") from err
         except ValueError as err:
