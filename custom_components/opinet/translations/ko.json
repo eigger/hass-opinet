@@ -469,6 +469,16 @@
           "yes": "예",
           "no": "아니오"
         }
+      },
+      "station_urea": {
+        "name": "요소수"
+      },
+      "urea_stock": {
+        "name": "요소수 재고",
+        "state": {
+          "yes": "있음",
+          "no": "없음"
+        }
       }
     },
     "device_tracker": {
