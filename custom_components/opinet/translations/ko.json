@@ -3,14 +3,14 @@
     "step": {
       "user": {
         "title": "오피넷 유가정보",
-        "description": "한국석유공사 오피넷에서 발급받은 API 키를 입력하세요.",
+        "description": "한국석유공사 오피넷에서 발급받은 API 키를 입력하세요. [무료 API 이용 신청](https://www.opinet.co.kr/user/custapi/custApiInfo.do)",
         "data": {
           "api_key": "API 키"
         }
       },
       "reauth_confirm": {
         "title": "오피넷 재인증",
-        "description": "API 키가 더 이상 유효하지 않습니다. 새 API 키를 입력하세요.",
+        "description": "API 키가 더 이상 유효하지 않습니다. 새 API 키를 입력하세요. [무료 API 이용 신청](https://www.opinet.co.kr/user/custapi/custApiInfo.do)",
         "data": {
           "api_key": "API 키"
         }
