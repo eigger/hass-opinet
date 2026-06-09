@@ -469,6 +469,16 @@
           "yes": "Yes",
           "no": "No"
         }
+      },
+      "station_urea": {
+        "name": "Urea (DEF)"
+      },
+      "urea_stock": {
+        "name": "Urea (DEF) stock",
+        "state": {
+          "yes": "In stock",
+          "no": "Out of stock"
+        }
       }
     },
     "device_tracker": {

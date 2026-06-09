@@ -23,6 +23,7 @@ from .coordinator import (
     OpinetAvgCoordinator,
     OpinetRecentAvgCoordinator,
     OpinetStationCoordinator,
+    OpinetUreaCoordinator,
     OpinetWeeklyAvgCoordinator,
 )
 from .services import async_setup_services, async_unload_services
@@ -46,6 +47,7 @@ class OpinetRuntimeData:
     station_coordinators: dict[str, OpinetStationCoordinator] = field(
         default_factory=dict
     )
+    urea_coordinator: OpinetUreaCoordinator | None = None
 
 
 type OpinetConfigEntry = ConfigEntry[OpinetRuntimeData]
@@ -82,12 +84,25 @@ async def async_setup_entry(hass: HomeAssistant, entry: OpinetConfigEntry) -> bo
         coordinator.async_setup_schedule()
         station_coordinators[subentry_id] = coordinator
 
+    # 등록 주유소들의 시도코드(시군코드 앞 2자리)로 요소수 가격/재고를 조회한다.
+    areas = {
+        coordinator.data["sigun"][:2]
+        for coordinator in station_coordinators.values()
+        if coordinator.data and coordinator.data.get("sigun")
+    }
+    urea_coordinator: OpinetUreaCoordinator | None = None
+    if areas:
+        urea_coordinator = OpinetUreaCoordinator(hass, entry, api, areas, offset)
+        await urea_coordinator.async_config_entry_first_refresh()
+        urea_coordinator.async_setup_schedule()
+
     entry.runtime_data = OpinetRuntimeData(
         api=api,
         avg_coordinator=avg_coordinator,
         recent_coordinator=recent_coordinator,
         weekly_coordinator=weekly_coordinator,
         station_coordinators=station_coordinators,
+        urea_coordinator=urea_coordinator,
     )
 
     _async_setup_devices(hass, entry)

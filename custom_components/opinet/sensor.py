@@ -21,6 +21,7 @@ from .coordinator import (
     OpinetAvgCoordinator,
     OpinetRecentAvgCoordinator,
     OpinetStationCoordinator,
+    OpinetUreaCoordinator,
     OpinetWeeklyAvgCoordinator,
 )
 
@@ -51,6 +52,7 @@ async def async_setup_entry(
     )
 
     # Per-station sensors, attached to their subentry/device.
+    urea_coordinator = data.urea_coordinator
     for subentry_id, coordinator in data.station_coordinators.items():
         prices: dict[str, Any] = (coordinator.data or {}).get("prices", {})
         async_add_entities(
@@ -68,6 +70,23 @@ async def async_setup_entry(
             ),
             config_subentry_id=subentry_id,
         )
+
+        # 요소수 가격/재고 — 해당 주유소가 요소수 판매 목록에 있을 때만 생성.
+        uni_id = (coordinator.data or {}).get("uni_id")
+        if (
+            urea_coordinator is not None
+            and uni_id
+            and uni_id in (urea_coordinator.data or {})
+        ):
+            async_add_entities(
+                (
+                    OpinetStationUreaSensor(urea_coordinator, coordinator, uni_id),
+                    OpinetStationUreaStockSensor(
+                        urea_coordinator, coordinator, uni_id
+                    ),
+                ),
+                config_subentry_id=subentry_id,
+            )
 
 
 def _avg_device_info(entry_id: str) -> DeviceInfo:
@@ -330,3 +349,78 @@ class OpinetStationAmenitySensor(
         if value is None:
             return None
         return AMENITY_YES if str(value).upper() == "Y" else AMENITY_NO
+
+
+class OpinetStationUreaSensor(
+    CoordinatorEntity[OpinetUreaCoordinator], SensorEntity
+):
+    """요소수(DEF) 판매가격 — 주유소별."""
+
+    _attr_has_entity_name = True
+    _attr_native_unit_of_measurement = PRICE_UNIT
+    _attr_state_class = SensorStateClass.MEASUREMENT
+    _attr_icon = "mdi:car-coolant-level"
+    _attr_translation_key = "station_urea"
+
+    def __init__(
+        self,
+        coordinator: OpinetUreaCoordinator,
+        station: OpinetStationCoordinator,
+        uni_id: str,
+    ) -> None:
+        super().__init__(coordinator)
+        self._uni_id = uni_id
+        self._attr_unique_id = f"{station.station_id}_urea"
+        self._attr_device_info = station.device_info
+
+    @property
+    def _row(self) -> dict[str, Any]:
+        return (self.coordinator.data or {}).get(self._uni_id, {})
+
+    @property
+    def native_value(self) -> float | None:
+        return self._row.get("price")
+
+    @property
+    def available(self) -> bool:
+        return super().available and bool(self._row)
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        row = self._row
+        return {
+            "station_id": self._uni_id,
+            "in_stock": str(row.get("stock", "")).upper() == "Y",
+            "trade_date": row.get("trade_dt"),
+            "trade_time": row.get("trade_tm"),
+        }
+
+
+class OpinetStationUreaStockSensor(
+    CoordinatorEntity[OpinetUreaCoordinator], SensorEntity
+):
+    """요소수 재고 유/무 (있음/없음) — 주유소별."""
+
+    _attr_has_entity_name = True
+    _attr_device_class = SensorDeviceClass.ENUM
+    _attr_options = list(AMENITY_OPTIONS)
+    _attr_icon = "mdi:storefront-outline"
+    _attr_translation_key = "urea_stock"
+
+    def __init__(
+        self,
+        coordinator: OpinetUreaCoordinator,
+        station: OpinetStationCoordinator,
+        uni_id: str,
+    ) -> None:
+        super().__init__(coordinator)
+        self._uni_id = uni_id
+        self._attr_unique_id = f"{station.station_id}_urea_stock"
+        self._attr_device_info = station.device_info
+
+    @property
+    def native_value(self) -> str | None:
+        row = (self.coordinator.data or {}).get(self._uni_id)
+        if not row:
+            return None
+        return AMENITY_YES if str(row.get("stock", "")).upper() == "Y" else AMENITY_NO

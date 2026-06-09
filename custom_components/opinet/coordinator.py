@@ -23,6 +23,7 @@ from .const import (
     DEFAULT_REFRESH_OFFSET_MINUTES,
     DOMAIN,
     PRICE_UPDATE_HOURS,
+    UREA_UPDATE_HOURS,
     WEEKLY_UPDATE_HOURS,
     WEEKLY_UPDATE_WEEKDAY,
     brand_label,
@@ -302,6 +303,7 @@ class OpinetStationCoordinator(OpinetScheduledCoordinator):
             "uni_id": detail.get("UNI_ID", self.station_id),
             "name": detail.get("OS_NM"),
             "brand": poll_div_code(detail),
+            "sigun": detail.get("SIGUNCD"),
             "lpg_yn": detail.get("LPG_YN"),
             "tel": detail.get("TEL"),
             "address": detail.get("NEW_ADR") or detail.get("VAN_ADR"),
@@ -316,3 +318,49 @@ class OpinetStationCoordinator(OpinetScheduledCoordinator):
             "longitude": longitude,
             "prices": prices,
         }
+
+
+class OpinetUreaCoordinator(OpinetScheduledCoordinator):
+    """등록 주유소의 요소수 판매가격/재고 — 7, 13, 18, 24(0)시 갱신.
+
+    요소수 API(``ureaPrice.do``)는 시도(2자리) 단위 벌크 조회만 제공하므로,
+    등록된 주유소들의 시도코드 집합을 한 번씩 조회한 뒤 ``UNI_ID`` 로 키잉한다.
+    같은 시도에 주유소가 여러 개여도 호출은 시도당 1회다.
+    """
+
+    def __init__(
+        self,
+        hass: HomeAssistant,
+        entry: ConfigEntry,
+        api: OpinetApi,
+        areas: set[str],
+        offset_minutes: int = DEFAULT_REFRESH_OFFSET_MINUTES,
+    ) -> None:
+        super().__init__(
+            hass,
+            entry,
+            api,
+            name=f"{DOMAIN} urea price",
+            update_hours=UREA_UPDATE_HOURS,
+            offset_minutes=offset_minutes,
+        )
+        self._areas = set(areas)
+
+    async def _async_update_data(self) -> dict[str, dict[str, Any]]:
+        result: dict[str, dict[str, Any]] = {}
+        for area in self._areas:
+            try:
+                rows = await self._api.async_get_urea_price(area)
+            except OpinetError as err:
+                _raise_update_error(err)
+            for row in rows:
+                uni_id = row.get("UNI_ID")
+                if not uni_id:
+                    continue
+                result[uni_id] = {
+                    "stock": row.get("STOCK_YN"),
+                    "price": _to_float(row.get("PRICE")),
+                    "trade_dt": row.get("TRADE_DT"),
+                    "trade_tm": row.get("TRADE_TM"),
+                }
+        return result
