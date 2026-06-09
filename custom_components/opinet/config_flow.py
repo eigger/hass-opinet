@@ -30,7 +30,6 @@ from homeassistant.helpers.selector import (
 from .api import OpinetApi, OpinetAuthError, OpinetConnectionError, OpinetError
 from .const import (
     AREAS,
-    BRANDS,
     CONF_API_KEY,
     CONF_AREA,
     CONF_OSNM,
@@ -41,6 +40,8 @@ from .const import (
     MAX_REFRESH_OFFSET_MINUTES,
     MIN_REFRESH_OFFSET_MINUTES,
     SUBENTRY_TYPE_STATION,
+    brand_label,
+    poll_div_code,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -311,7 +312,7 @@ class StationSubentryFlowHandler(ConfigSubentryFlow):
     @staticmethod
     def _format_station(station: dict[str, Any]) -> str:
         """Human-readable label for a search result."""
-        brand = BRANDS.get(station.get("POLL_DIV_CD", ""), "")
+        brand = brand_label(poll_div_code(station)) or ""
         name = station.get("OS_NM", "")
         addr = station.get("NEW_ADR") or station.get("VAN_ADR") or ""
         parts = [p for p in (name, brand, addr) if p]

@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import Any
 
 from homeassistant.components.sensor import (
+    SensorDeviceClass,
     SensorEntity,
     SensorStateClass,
 )
@@ -14,7 +16,7 @@ from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from . import OpinetConfigEntry
-from .const import BRANDS, DOMAIN, PRICE_UNIT, PRODUCTS
+from .const import AMENITY_NO, AMENITY_OPTIONS, AMENITY_YES, DOMAIN, PRICE_UNIT, PRODUCTS
 from .coordinator import (
     OpinetAvgCoordinator,
     OpinetRecentAvgCoordinator,
@@ -56,6 +58,13 @@ async def async_setup_entry(
                 OpinetStationSensor(coordinator, prodcd)
                 for prodcd in prices
                 if prodcd in PRODUCTS
+            ),
+            config_subentry_id=subentry_id,
+        )
+        async_add_entities(
+            (
+                OpinetStationAmenitySensor(coordinator, description)
+                for description in AMENITY_DESCRIPTIONS
             ),
             config_subentry_id=subentry_id,
         )
@@ -242,9 +251,82 @@ class OpinetStationSensor(
             "product_code": self._prodcd,
             "station_id": self.coordinator.station_id,
             "station_name": data.get("name"),
-            "brand": BRANDS.get(data.get("brand", ""), data.get("brand")),
+            "brand": self.coordinator.brand_name,
             "address": data.get("address"),
             "tel": data.get("tel"),
             "trade_date": price.get("trade_dt"),
             "trade_time": price.get("trade_tm"),
         }
+
+
+@dataclass(frozen=True, kw_only=True)
+class OpinetAmenityDescription:
+    """Amenity sensor tied to a coordinator data key (Y/N)."""
+
+    key: str
+    translation_key: str
+    data_key: str
+    icon: str
+
+
+AMENITY_DESCRIPTIONS: tuple[OpinetAmenityDescription, ...] = (
+    OpinetAmenityDescription(
+        key="car_wash",
+        translation_key="car_wash",
+        data_key="car_wash_yn",
+        icon="mdi:car-wash",
+    ),
+    OpinetAmenityDescription(
+        key="maintenance",
+        translation_key="maintenance",
+        data_key="maint_yn",
+        icon="mdi:car-wrench",
+    ),
+    OpinetAmenityDescription(
+        key="convenience_store",
+        translation_key="convenience_store",
+        data_key="cvs_yn",
+        icon="mdi:store",
+    ),
+    OpinetAmenityDescription(
+        key="quality_certified",
+        translation_key="quality_certified",
+        data_key="kpetro_yn",
+        icon="mdi:certificate",
+    ),
+    OpinetAmenityDescription(
+        key="good_station",
+        translation_key="good_station",
+        data_key="good_yn",
+        icon="mdi:thumb-up",
+    ),
+)
+
+
+class OpinetStationAmenitySensor(
+    CoordinatorEntity[OpinetStationCoordinator], SensorEntity
+):
+    """Amenity availability (있음/없음) of a gas station."""
+
+    _attr_has_entity_name = True
+    _attr_device_class = SensorDeviceClass.ENUM
+    _attr_options = list(AMENITY_OPTIONS)
+
+    def __init__(
+        self,
+        coordinator: OpinetStationCoordinator,
+        description: OpinetAmenityDescription,
+    ) -> None:
+        super().__init__(coordinator)
+        self._description = description
+        self._attr_unique_id = f"{coordinator.station_id}_{description.key}"
+        self._attr_translation_key = description.translation_key
+        self._attr_icon = description.icon
+        self._attr_device_info = coordinator.device_info
+
+    @property
+    def native_value(self) -> str | None:
+        value = (self.coordinator.data or {}).get(self._description.data_key)
+        if value is None:
+            return None
+        return AMENITY_YES if str(value).upper() == "Y" else AMENITY_NO

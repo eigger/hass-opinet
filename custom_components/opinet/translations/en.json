@@ -434,23 +434,41 @@
       },
       "station_k015": {
         "name": "Auto LPG"
-      }
-    },
-    "binary_sensor": {
+      },
       "car_wash": {
-        "name": "Car wash"
+        "name": "Car wash",
+        "state": {
+          "yes": "Yes",
+          "no": "No"
+        }
       },
       "maintenance": {
-        "name": "Light maintenance"
+        "name": "Light maintenance",
+        "state": {
+          "yes": "Yes",
+          "no": "No"
+        }
       },
       "convenience_store": {
-        "name": "Convenience store"
+        "name": "Convenience store",
+        "state": {
+          "yes": "Yes",
+          "no": "No"
+        }
       },
       "quality_certified": {
-        "name": "Quality-certified"
+        "name": "Quality-certified",
+        "state": {
+          "yes": "Yes",
+          "no": "No"
+        }
       },
       "good_station": {
-        "name": "Good (fair-price) station"
+        "name": "Good (fair-price) station",
+        "state": {
+          "yes": "Yes",
+          "no": "No"
+        }
       }
     },
     "device_tracker": {

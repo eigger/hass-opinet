@@ -434,23 +434,41 @@
       },
       "station_k015": {
         "name": "자동차부탄"
-      }
-    },
-    "binary_sensor": {
+      },
       "car_wash": {
-        "name": "세차장"
+        "name": "세차장",
+        "state": {
+          "yes": "있음",
+          "no": "없음"
+        }
       },
       "maintenance": {
-        "name": "경정비"
+        "name": "경정비",
+        "state": {
+          "yes": "있음",
+          "no": "없음"
+        }
       },
       "convenience_store": {
-        "name": "편의점"
+        "name": "편의점",
+        "state": {
+          "yes": "있음",
+          "no": "없음"
+        }
       },
       "quality_certified": {
-        "name": "품질인증주유소"
+        "name": "품질인증주유소",
+        "state": {
+          "yes": "예",
+          "no": "아니오"
+        }
       },
       "good_station": {
-        "name": "착한주유소"
+        "name": "착한주유소",
+        "state": {
+          "yes": "예",
+          "no": "아니오"
+        }
       }
     },
     "device_tracker": {

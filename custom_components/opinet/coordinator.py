@@ -19,13 +19,15 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 
 from .api import OpinetApi, OpinetAuthError, OpinetError
 from .const import (
-    BRANDS,
     DAILY_AVG_UPDATE_HOURS,
     DEFAULT_REFRESH_OFFSET_MINUTES,
     DOMAIN,
     PRICE_UPDATE_HOURS,
     WEEKLY_UPDATE_HOURS,
     WEEKLY_UPDATE_WEEKDAY,
+    brand_label,
+    poll_div_code,
+    station_type_label,
 )
 from .geo import katec_to_wgs84
 
@@ -245,17 +247,27 @@ class OpinetStationCoordinator(OpinetScheduledCoordinator):
         self.station_id = station_id
 
     @property
+    def brand_name(self) -> str | None:
+        """Human-readable oil company / brand label."""
+        return brand_label((self.data or {}).get("brand"))
+
+    @property
+    def station_type(self) -> str:
+        """Device model label from LPG_YN (gas / LPG / both)."""
+        return station_type_label((self.data or {}).get("lpg_yn"))
+
+    @property
     def device_info(self) -> DeviceInfo:
-        """주유소 기기 정보. 제조사=정유사(상표), 허브 기기의 하위로 연결된다."""
+        """주유소 기기 정보. 제조사=정유사(상표), 모델=업종, 허브 기기의 하위로 연결된다."""
         data = self.data or {}
-        refiner = BRANDS.get(data.get("brand", ""), data.get("brand"))
+        refiner = self.brand_name
         entry_id = self.config_entry.entry_id if self.config_entry else ""
         return DeviceInfo(
             identifiers={(DOMAIN, self.station_id)},
             # 기기 이름은 실제 주유소 상호(데이터) — 라벨이 아니므로 그대로 사용.
             name=data.get("name") or self.station_id,
             manufacturer=refiner or None,
-            model="Gas station",
+            model=self.station_type,
             via_device=(DOMAIN, entry_id),
         )
 
@@ -289,7 +301,8 @@ class OpinetStationCoordinator(OpinetScheduledCoordinator):
         return {
             "uni_id": detail.get("UNI_ID", self.station_id),
             "name": detail.get("OS_NM"),
-            "brand": detail.get("POLL_DIV_CD"),
+            "brand": poll_div_code(detail),
+            "lpg_yn": detail.get("LPG_YN"),
             "tel": detail.get("TEL"),
             "address": detail.get("NEW_ADR") or detail.get("VAN_ADR"),
             "kpetro_yn": detail.get("KPETRO_YN"),

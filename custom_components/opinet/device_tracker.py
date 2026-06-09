@@ -59,6 +59,7 @@ class OpinetStationTracker(
         return {
             "station_id": self.coordinator.station_id,
             "station_name": data.get("name"),
+            "brand": self.coordinator.brand_name,
             "address": data.get("address"),
             "katec_x": data.get("gis_x"),
             "katec_y": data.get("gis_y"),

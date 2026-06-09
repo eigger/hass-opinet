@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 DOMAIN = "opinet"
 
 # Config / subentry keys
@@ -51,7 +53,7 @@ TAXFREE_PRODUCTS: dict[str, str] = {
     "C104": "면세등유",
 }
 
-# Brand (POLL_DIV_CD) codes.
+# Brand (POLL_DIV) codes — docs say POLL_DIV_CD; API JSON/XML use POLL_DIV_CO.
 BRANDS: dict[str, str] = {
     "SKE": "SK에너지",
     "GSC": "GS칼텍스",
@@ -64,6 +66,38 @@ BRANDS: dict[str, str] = {
     "SKG": "SK가스",
     "ETC": "자가상표",
 }
+
+
+def poll_div_code(row: dict[str, Any]) -> str | None:
+    """Extract brand code from an Opinet API row."""
+    code = row.get("POLL_DIV_CO") or row.get("POLL_DIV_CD")
+    if code is None:
+        return None
+    code = str(code).strip()
+    return code or None
+
+
+def brand_label(code: str | None) -> str | None:
+    """Resolve a POLL_DIV code to a human-readable brand name."""
+    if not code:
+        return None
+    return BRANDS.get(code, code)
+
+
+# LPG_YN — 업종구분 (detailById.do).
+STATION_TYPES: dict[str, str] = {
+    "N": "Gas station",
+    "Y": "LPG station",
+    "C": "Gas & LPG station",
+}
+
+
+def station_type_label(code: str | None) -> str:
+    """Resolve LPG_YN to a device model label."""
+    if not code:
+        return STATION_TYPES["N"]
+    return STATION_TYPES.get(str(code).strip().upper(), STATION_TYPES["N"])
+
 
 # 시도 지역코드 (searchByName.do / avg* 의 area 파라미터)
 AREAS: dict[str, str] = {
@@ -87,3 +121,8 @@ AREAS: dict[str, str] = {
 }
 
 PRICE_UNIT = "원/L"
+
+# 편의시설 ENUM 센서 상태 (내부값 yes/no → UI 번역: 있음/없음).
+AMENITY_YES = "yes"
+AMENITY_NO = "no"
+AMENITY_OPTIONS: tuple[str, ...] = (AMENITY_YES, AMENITY_NO)
