@@ -359,6 +359,7 @@ class OpinetStationUreaSensor(
     _attr_has_entity_name = True
     _attr_native_unit_of_measurement = PRICE_UNIT
     _attr_state_class = SensorStateClass.MEASUREMENT
+    _attr_suggested_display_precision = 0
     _attr_icon = "mdi:car-coolant-level"
     _attr_translation_key = "station_urea"
 
