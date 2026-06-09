@@ -117,7 +117,7 @@ class OpinetAvgCoordinator(OpinetScheduledCoordinator):
             hass,
             entry,
             api,
-            name=f"{DOMAIN} 전국 평균가격",
+            name=f"{DOMAIN} nationwide average price",
             update_hours=PRICE_UPDATE_HOURS,
             offset_minutes=offset_minutes,
         )
@@ -155,7 +155,7 @@ class OpinetRecentAvgCoordinator(OpinetScheduledCoordinator):
             hass,
             entry,
             api,
-            name=f"{DOMAIN} 전국 일일 평균가격",
+            name=f"{DOMAIN} nationwide daily average price",
             update_hours=DAILY_AVG_UPDATE_HOURS,
             offset_minutes=offset_minutes,
         )
@@ -196,7 +196,7 @@ class OpinetWeeklyAvgCoordinator(OpinetScheduledCoordinator):
             hass,
             entry,
             api,
-            name=f"{DOMAIN} 전국 주간 평균가격",
+            name=f"{DOMAIN} nationwide weekly average price",
             update_hours=WEEKLY_UPDATE_HOURS,
             update_weekday=WEEKLY_UPDATE_WEEKDAY,
             offset_minutes=offset_minutes,
@@ -240,7 +240,7 @@ class OpinetStationCoordinator(OpinetScheduledCoordinator):
             hass,
             entry,
             api,
-            name=f"{DOMAIN} 주유소 {station_id}",
+            name=f"{DOMAIN} station {station_id}",
             update_hours=PRICE_UPDATE_HOURS,
             offset_minutes=offset_minutes,
         )

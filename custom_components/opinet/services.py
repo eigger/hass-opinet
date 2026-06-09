@@ -22,6 +22,10 @@ from homeassistant.core import (
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers.service import (
+    ALL_SERVICE_DESCRIPTIONS_CACHE,
+    SERVICE_DESCRIPTION_CACHE,
+)
 
 from .api import OpinetApi, OpinetError
 from .const import DOMAIN
@@ -273,6 +277,19 @@ def _resolve_location(
 
 
 @callback
+def _invalidate_service_descriptions(hass: HomeAssistant) -> None:
+    """services.yaml 기반 UI 필드 정의를 다시 읽도록 캐시를 비운다."""
+    service_names = [name for name, _schema, _handler in _SERVICES] + [
+        SERVICE_GET_AROUND,
+        SERVICE_GET_STATION_DETAIL,
+    ]
+    if descriptions_cache := hass.data.get(SERVICE_DESCRIPTION_CACHE):
+        for name in service_names:
+            descriptions_cache.pop((DOMAIN, name), None)
+    hass.data.pop(ALL_SERVICE_DESCRIPTIONS_CACHE, None)
+
+
+@callback
 def async_setup_services(hass: HomeAssistant) -> None:
     """모든 Opinet 데이터 조회 서비스를 등록한다(중복 등록 방지)."""
 
@@ -350,6 +367,8 @@ def async_setup_services(hass: HomeAssistant) -> None:
             supports_response=SupportsResponse.ONLY,
         )
 
+    _invalidate_service_descriptions(hass)
+
 
 @callback
 def async_unload_services(hass: HomeAssistant) -> None:
@@ -361,3 +380,4 @@ def async_unload_services(hass: HomeAssistant) -> None:
     for name in names:
         if hass.services.has_service(DOMAIN, name):
             hass.services.async_remove(DOMAIN, name)
+    _invalidate_service_descriptions(hass)
