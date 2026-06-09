@@ -16,6 +16,21 @@ from .const import API_BASE
 _LOGGER = logging.getLogger(__name__)
 
 
+def _strip_values(value: Any) -> Any:
+    """오피넷 응답 문자열 값의 앞뒤 공백/제어문자(\\r\\n)를 제거한다.
+
+    ureaPrice.do 등 일부 엔드포인트는 PRICE/STOCK_YN 값을 ``"\\r\\n\\r\\n1000\\r\\n\\r\\n"``
+    처럼 감싸서 보내므로, 중첩 구조(list/dict)까지 재귀적으로 정리한다.
+    """
+    if isinstance(value, str):
+        return value.strip()
+    if isinstance(value, list):
+        return [_strip_values(item) for item in value]
+    if isinstance(value, dict):
+        return {key: _strip_values(item) for key, item in value.items()}
+    return value
+
+
 class OpinetError(Exception):
     """Base error for the Opinet API."""
 
@@ -74,7 +89,7 @@ class OpinetApi:
         oil = result.get("OIL", [])
         if not isinstance(oil, list):
             raise OpinetConnectionError("Malformed Opinet OIL block")
-        return oil
+        return _strip_values(oil)
 
     # ── ① 전국 주유소 평균가격(현재) ──────────────────────────────
     async def async_get_avg_all_price(self) -> list[dict[str, Any]]:
