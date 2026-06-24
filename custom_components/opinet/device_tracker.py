@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from homeassistant.components.device_tracker import SourceType, TrackerEntity
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
@@ -35,29 +35,26 @@ class OpinetStationTracker(
     _attr_has_entity_name = True
     _attr_translation_key = "station_location"
     _attr_icon = "mdi:gas-station"
+    _attr_source_type = SourceType.GPS
 
     def __init__(self, coordinator: OpinetStationCoordinator) -> None:
         super().__init__(coordinator)
         self._attr_unique_id = f"{coordinator.station_id}_location"
         self._attr_device_info = coordinator.device_info
+        self._sync_tracker_attrs()
 
-    @property
-    def source_type(self) -> SourceType:
-        return SourceType.GPS
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        """Sync tracker attrs when station data is refreshed."""
+        self._sync_tracker_attrs()
+        super()._handle_coordinator_update()
 
-    @property
-    def location_name(self) -> str | None:
-        """Return address as the tracker state (instead of home/not_home)."""
+    def _sync_tracker_attrs(self) -> None:
+        """Update location attrs from coordinator data."""
         data = self.coordinator.data or {}
-        return data.get("address") or data.get("name")
-
-    @property
-    def latitude(self) -> float | None:
-        return (self.coordinator.data or {}).get("latitude")
-
-    @property
-    def longitude(self) -> float | None:
-        return (self.coordinator.data or {}).get("longitude")
+        self._attr_location_name = data.get("address") or data.get("name")
+        self._attr_latitude = data.get("latitude")
+        self._attr_longitude = data.get("longitude")
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
