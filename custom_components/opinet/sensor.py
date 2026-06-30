@@ -56,6 +56,10 @@ async def async_setup_entry(
     for subentry_id, coordinator in data.station_coordinators.items():
         prices: dict[str, Any] = (coordinator.data or {}).get("prices", {})
         async_add_entities(
+            [OpinetStationLocationSensor(coordinator)],
+            config_subentry_id=subentry_id,
+        )
+        async_add_entities(
             (
                 OpinetStationSensor(coordinator, prodcd)
                 for prodcd in prices
@@ -426,3 +430,36 @@ class OpinetStationUreaStockSensor(
         if not row:
             return None
         return AMENITY_YES if str(row.get("stock", "")).upper() == "Y" else AMENITY_NO
+
+
+class OpinetStationLocationSensor(
+    CoordinatorEntity[OpinetStationCoordinator], SensorEntity
+):
+    """주유소의 위치 및 주소 센서 — 지도상에 1개의 핀으로 나타남."""
+
+    _attr_has_entity_name = True
+    _attr_icon = "mdi:map-marker"
+    _attr_translation_key = "station_location"
+
+    def __init__(self, coordinator: OpinetStationCoordinator) -> None:
+        super().__init__(coordinator)
+        self._attr_unique_id = f"{coordinator.station_id}_location"
+        self._attr_device_info = coordinator.device_info
+
+    @property
+    def native_value(self) -> str | None:
+        """상태값으로 주소를 표시."""
+        data = self.coordinator.data or {}
+        return data.get("address")
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        data = self.coordinator.data or {}
+        return {
+            "station_id": self.coordinator.station_id,
+            "station_name": data.get("name"),
+            "brand": self.coordinator.brand_name,
+            "address": data.get("address"),
+            "latitude": data.get("latitude"),
+            "longitude": data.get("longitude"),
+        }

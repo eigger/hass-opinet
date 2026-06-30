@@ -479,9 +479,7 @@
           "yes": "In stock",
           "no": "Out of stock"
         }
-      }
-    },
-    "device_tracker": {
+      },
       "station_location": {
         "name": "Location"
       }

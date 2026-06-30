@@ -479,9 +479,7 @@
           "yes": "있음",
           "no": "없음"
         }
-      }
-    },
-    "device_tracker": {
+      },
       "station_location": {
         "name": "위치"
       }
