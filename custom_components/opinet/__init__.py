@@ -31,7 +31,6 @@ from .services import async_setup_services, async_unload_services
 _LOGGER = logging.getLogger(__name__)
 
 PLATFORMS: list[Platform] = [
-    Platform.DEVICE_TRACKER,
     Platform.SENSOR,
 ]
 
