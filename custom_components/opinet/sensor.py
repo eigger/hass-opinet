@@ -10,6 +10,7 @@ from homeassistant.components.sensor import (
     SensorEntity,
     SensorStateClass,
 )
+from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
@@ -333,6 +334,7 @@ class OpinetStationAmenitySensor(
     """Amenity availability (있음/없음) of a gas station."""
 
     _attr_has_entity_name = True
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
     _attr_device_class = SensorDeviceClass.ENUM
     _attr_options = list(AMENITY_OPTIONS)
 
@@ -408,6 +410,7 @@ class OpinetStationUreaStockSensor(
     """요소수 재고 유/무 (있음/없음) — 주유소별."""
 
     _attr_has_entity_name = True
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
     _attr_device_class = SensorDeviceClass.ENUM
     _attr_options = list(AMENITY_OPTIONS)
     _attr_icon = "mdi:storefront-outline"
@@ -438,6 +441,7 @@ class OpinetStationLocationSensor(
     """주유소의 위치 및 주소 센서 — 지도상에 1개의 핀으로 나타남."""
 
     _attr_has_entity_name = True
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
     _attr_icon = "mdi:map-marker"
     _attr_translation_key = "station_location"
 
