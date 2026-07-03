@@ -1,6 +1,7 @@
 # Opinet 유가정보 Home Assistant Integration (hass-opinet)
 
 [![GitHub Release](https://img.shields.io/github/v/release/eigger/hass-opinet?style=flat-square)](https://github.com/eigger/hass-opinet/releases)
+[![Tests](https://img.shields.io/github/actions/workflow/status/eigger/hass-opinet/tests.yml?branch=main&style=flat-square&label=tests)](https://github.com/eigger/hass-opinet/actions/workflows/tests.yml)
 [![License](https://img.shields.io/github/license/eigger/hass-opinet?style=flat-square)](LICENSE)
 [![HACS](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
 ![integration usage](https://img.shields.io/badge/dynamic/json?color=41BDF5&logo=home-assistant&label=usage&suffix=%20installs&cacheSeconds=15600&query=%24.opinet.total&url=https%3A%2F%2Fanalytics.home-assistant.io%2Fcustom_integrations.json)
@@ -25,27 +26,28 @@
 제품: 휘발유/고급휘발유, 경유, 등유, LPG. 갱신은 위 시각 +오프셋(기본 10분,
 옵션에서 변경)에 이뤄집니다.
 
-주유소를 추가하면 다음도 함께 생성됩니다.
+주유소를 추가하면 다음도 함께 생성됩니다(진단 항목으로 분류).
 
-- **위치(device_tracker)**: 주유소 좌표(KATEC→위경도 변환)를 GPS로 들고 있어 지도에 표시됩니다.
+- **위치 sensor**: 상태값은 주소이고, 위도/경도(KATEC→위경도 변환) 속성을 가지고 있어
+  지도 카드에 핀으로 표시할 수 있습니다.
 - **편의시설 sensor (ENUM)**: 세차장·경정비·편의점은 있음/없음, 품질인증·착한주유소는 예/아니오.
-- **요소수 sensor**: 주유소의 시군코드로 해당 시도의 요소수 가격을 조회해, 등록 주유소와
+- **요소수 재고 sensor (ENUM)**: 있음/없음.
+
+주유소 판매가격/요소수 판매가격 센서는 일반 센서로, 위 진단 센서와 구분됩니다.
+
+- **요소수 판매가격 sensor**: 주유소의 시군코드로 해당 시도의 요소수 가격을 조회해, 등록 주유소와
   ID(UNI_ID)가 일치하면 **요소수 판매가격**과 **재고(있음/없음)** 센서를 생성합니다.
   요소수를 취급하지 않는 주유소에는 생성되지 않습니다.
 
 ### 지도에 표시하기
 
-위치 엔티티는 `person`과 동일한 GPS device_tracker입니다. 따라서 **상태(state)** 는
-존(zone)/집/외출로 표시되고(집 존 밖이면 `외출`), **위치는 지도로** 봅니다.
-
-- 엔티티를 클릭하면 상세창에 지도가 나옵니다.
-- 좌측 **지도(Map) 패널**에 자동 포함됩니다.
-- 대시보드에 고정하려면 지도 카드를 사용하세요:
+위치 센서는 위도/경도 속성을 가진 일반 sensor 엔티티입니다(device_tracker 아님).
+대시보드에서 지도 카드로 표시하려면:
 
 ```yaml
 type: map
 entities:
-  - entity: device_tracker.<주유소>_위치
+  - entity: sensor.<주유소>_위치
 ```
 
 > API 키가 만료/무효화되면 자동으로 **재인증(reauth)** 알림이 떠서 새 키를 입력할 수 있습니다.
