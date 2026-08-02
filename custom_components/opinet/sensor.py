@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, ClassVar
 
 from homeassistant.components.sensor import (
     SensorDeviceClass,
@@ -17,7 +17,14 @@ from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from . import OpinetConfigEntry
-from .const import AMENITY_NO, AMENITY_OPTIONS, AMENITY_YES, DOMAIN, PRICE_UNIT, PRODUCTS
+from .const import (
+    AMENITY_NO,
+    AMENITY_OPTIONS,
+    AMENITY_YES,
+    DOMAIN,
+    PRICE_UNIT,
+    PRODUCTS,
+)
 from .coordinator import (
     OpinetAvgCoordinator,
     OpinetRecentAvgCoordinator,
@@ -336,7 +343,7 @@ class OpinetStationAmenitySensor(
     _attr_has_entity_name = True
     _attr_entity_category = EntityCategory.DIAGNOSTIC
     _attr_device_class = SensorDeviceClass.ENUM
-    _attr_options = list(AMENITY_OPTIONS)
+    _attr_options: ClassVar[list[str]] = list(AMENITY_OPTIONS)
 
     def __init__(
         self,
@@ -412,7 +419,7 @@ class OpinetStationUreaStockSensor(
     _attr_has_entity_name = True
     _attr_entity_category = EntityCategory.DIAGNOSTIC
     _attr_device_class = SensorDeviceClass.ENUM
-    _attr_options = list(AMENITY_OPTIONS)
+    _attr_options: ClassVar[list[str]] = list(AMENITY_OPTIONS)
     _attr_icon = "mdi:storefront-outline"
     _attr_translation_key = "urea_stock"
 
