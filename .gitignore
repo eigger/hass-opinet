@@ -44,7 +44,7 @@ home-assistant.log*
 Thumbs.db
 
 # Claude Code local settings
-.claude/settings.local.json
+.claude/
 
 # Misc scratch
 _pdftext.txt
