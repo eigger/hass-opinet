@@ -493,32 +493,32 @@
   "selector": {
     "product": {
       "options": {
-        "B027": "Regular gasoline",
-        "B034": "Premium gasoline",
-        "D047": "Diesel",
-        "C004": "Kerosene",
-        "K015": "Auto LPG"
+        "b027": "Regular gasoline",
+        "b034": "Premium gasoline",
+        "d047": "Diesel",
+        "c004": "Kerosene",
+        "k015": "Auto LPG"
       }
     },
     "taxfree_product": {
       "options": {
-        "B127": "Tax-free gasoline",
-        "D147": "Tax-free diesel",
-        "C104": "Tax-free kerosene"
+        "b127": "Tax-free gasoline",
+        "d147": "Tax-free diesel",
+        "c104": "Tax-free kerosene"
       }
     },
     "brand": {
       "options": {
-        "SKE": "SK Energy",
-        "GSC": "GS Caltex",
-        "HDO": "Hyundai Oilbank",
-        "SOL": "S-OIL",
-        "RTE": "Self-employed Alddeul",
-        "RTX": "Highway Alddeul",
-        "NHO": "Nonghyup Alddeul",
-        "SKG": "SK Gas",
-        "E1G": "E1",
-        "ETC": "Private brand"
+        "ske": "SK Energy",
+        "gsc": "GS Caltex",
+        "hdo": "Hyundai Oilbank",
+        "sol": "S-OIL",
+        "rte": "Self-employed Alddeul",
+        "rtx": "Highway Alddeul",
+        "nho": "Nonghyup Alddeul",
+        "skg": "SK Gas",
+        "e1g": "E1",
+        "etc": "Private brand"
       }
     },
     "area": {
