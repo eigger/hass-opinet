@@ -14,7 +14,7 @@ get_avg_sido_price:
       selector:
         select:
           translation_key: product
-          options: ["B027", "B034", "D047", "C004", "K015"]
+          options: ["b027", "b034", "d047", "c004", "k015"]
 
 get_avg_sigun_price:
   fields:
@@ -32,7 +32,7 @@ get_avg_sigun_price:
       selector:
         select:
           translation_key: product
-          options: ["B027", "B034", "D047", "C004", "K015"]
+          options: ["b027", "b034", "d047", "c004", "k015"]
 
 get_avg_recent_price:
   fields:
@@ -44,7 +44,7 @@ get_avg_recent_price:
       selector:
         select:
           translation_key: product
-          options: ["B027", "B034", "D047", "C004", "K015"]
+          options: ["b027", "b034", "d047", "c004", "k015"]
 
 get_poll_avg_recent_price:
   fields:
@@ -52,12 +52,12 @@ get_poll_avg_recent_price:
       selector:
         select:
           translation_key: product
-          options: ["B027", "B034", "D047", "C004", "K015"]
+          options: ["b027", "b034", "d047", "c004", "k015"]
     pollcd:
       selector:
         select:
           translation_key: brand
-          options: ["SKE", "GSC", "HDO", "SOL", "RTE", "RTX", "NHO", "SKG", "E1G", "ETC"]
+          options: ["ske", "gsc", "hdo", "sol", "rte", "rtx", "nho", "skg", "e1g", "etc"]
 
 get_area_avg_recent_price:
   fields:
@@ -75,7 +75,7 @@ get_area_avg_recent_price:
       selector:
         select:
           translation_key: product
-          options: ["B027", "B034", "D047", "C004", "K015"]
+          options: ["b027", "b034", "d047", "c004", "k015"]
 
 get_avg_last_week:
   fields:
@@ -83,7 +83,7 @@ get_avg_last_week:
       selector:
         select:
           translation_key: product
-          options: ["B027", "B034", "D047", "C004", "K015"]
+          options: ["b027", "b034", "d047", "c004", "k015"]
     sido:
       selector:
         select:
@@ -97,7 +97,7 @@ get_low_top:
       selector:
         select:
           translation_key: product
-          options: ["B027", "B034", "D047", "C004", "K015"]
+          options: ["b027", "b034", "d047", "c004", "k015"]
     area:
       selector:
         select:
@@ -149,7 +149,7 @@ get_around:
       selector:
         select:
           translation_key: product
-          options: ["B027", "B034", "D047", "C004", "K015"]
+          options: ["b027", "b034", "d047", "c004", "k015"]
     sort:
       selector:
         select:
@@ -188,7 +188,7 @@ get_taxfree_avg_recent_price:
       selector:
         select:
           translation_key: taxfree_product
-          options: ["B127", "D147", "C104"]
+          options: ["b127", "d147", "c104"]
 
 get_taxfree_poll_avg_recent_price:
   fields:
@@ -196,12 +196,12 @@ get_taxfree_poll_avg_recent_price:
       selector:
         select:
           translation_key: taxfree_product
-          options: ["B127", "D147", "C104"]
+          options: ["b127", "d147", "c104"]
     pollcd:
       selector:
         select:
           translation_key: brand
-          options: ["SKE", "GSC", "HDO", "SOL", "RTE", "RTX", "NHO", "SKG", "E1G", "ETC"]
+          options: ["ske", "gsc", "hdo", "sol", "rte", "rtx", "nho", "skg", "e1g", "etc"]
 
 get_taxfree_low_top:
   fields:
@@ -210,7 +210,7 @@ get_taxfree_low_top:
       selector:
         select:
           translation_key: taxfree_product
-          options: ["B127", "D147", "C104"]
+          options: ["b127", "d147", "c104"]
     area:
       selector:
         select:
@@ -252,7 +252,7 @@ get_date_avg_recent_price:
       selector:
         select:
           translation_key: product
-          options: ["B027", "B034", "D047", "C004", "K015"]
+          options: ["b027", "b034", "d047", "c004", "k015"]
 
 get_date_poll_avg_recent_price:
   fields:
@@ -265,12 +265,12 @@ get_date_poll_avg_recent_price:
       selector:
         select:
           translation_key: product
-          options: ["B027", "B034", "D047", "C004", "K015"]
+          options: ["b027", "b034", "d047", "c004", "k015"]
     pollcd:
       selector:
         select:
           translation_key: brand
-          options: ["SKE", "GSC", "HDO", "SOL", "RTE", "RTX", "NHO", "SKG", "E1G", "ETC"]
+          options: ["ske", "gsc", "hdo", "sol", "rte", "rtx", "nho", "skg", "e1g", "etc"]
 
 get_date_area_avg_recent_price:
   fields:
@@ -289,4 +289,4 @@ get_date_area_avg_recent_price:
       selector:
         select:
           translation_key: product
-          options: ["B027", "B034", "D047", "C004", "K015"]
+          options: ["b027", "b034", "d047", "c004", "k015"]

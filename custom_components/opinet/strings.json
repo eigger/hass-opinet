@@ -3,14 +3,14 @@
     "step": {
       "user": {
         "title": "오피넷 유가정보",
-        "description": "한국석유공사 오피넷에서 발급받은 API 키를 입력하세요. [무료 API 이용 신청](https://www.opinet.co.kr/user/custapi/custApiInfo.do)",
+        "description": "한국석유공사 오피넷에서 발급받은 API 키를 입력하세요. [무료 API 이용 신청]({api_url})",
         "data": {
           "api_key": "API 키"
         }
       },
       "reauth_confirm": {
         "title": "오피넷 재인증",
-        "description": "API 키가 더 이상 유효하지 않습니다. 새 API 키를 입력하세요. [무료 API 이용 신청](https://www.opinet.co.kr/user/custapi/custApiInfo.do)",
+        "description": "API 키가 더 이상 유효하지 않습니다. 새 API 키를 입력하세요. [무료 API 이용 신청]({api_url})",
         "data": {
           "api_key": "API 키"
         }
@@ -493,32 +493,32 @@
   "selector": {
     "product": {
       "options": {
-        "B027": "휘발유",
-        "B034": "고급휘발유",
-        "D047": "경유",
-        "C004": "등유",
-        "K015": "LPG"
+        "b027": "휘발유",
+        "b034": "고급휘발유",
+        "d047": "경유",
+        "c004": "등유",
+        "k015": "LPG"
       }
     },
     "taxfree_product": {
       "options": {
-        "B127": "면세휘발유",
-        "D147": "면세경유",
-        "C104": "면세등유"
+        "b127": "면세휘발유",
+        "d147": "면세경유",
+        "c104": "면세등유"
       }
     },
     "brand": {
       "options": {
-        "SKE": "SK에너지",
-        "GSC": "GS칼텍스",
-        "HDO": "현대오일뱅크",
-        "SOL": "S-OIL",
-        "RTE": "자영알뜰",
-        "RTX": "고속도로알뜰",
-        "NHO": "농협알뜰",
-        "SKG": "SK가스",
-        "E1G": "E1",
-        "ETC": "자가상표"
+        "ske": "SK에너지",
+        "gsc": "GS칼텍스",
+        "hdo": "현대오일뱅크",
+        "sol": "S-OIL",
+        "rte": "자영알뜰",
+        "rtx": "고속도로알뜰",
+        "nho": "농협알뜰",
+        "skg": "SK가스",
+        "e1g": "E1",
+        "etc": "자가상표"
       }
     },
     "area": {
