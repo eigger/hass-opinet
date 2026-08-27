@@ -7,10 +7,19 @@ class _MockBase:
     """제네릭 서브클래싱(예: DataUpdateCoordinator[T])을 지원하는 기본 Mock 클래스."""
 
     def __init__(self, *args, **kwargs):
-        pass
+        self.data = None
 
     def __class_getitem__(cls, item):
         return cls
+
+    async def async_config_entry_first_refresh(self):
+        pass
+
+    def async_setup_schedule(self):
+        pass
+
+    async def async_request_refresh(self):
+        pass
 
 
 class _MockUpdateFailed(Exception):
@@ -25,6 +34,20 @@ _mock_ha_coordinator.CoordinatorEntity = _MockBase
 _mock_ha_coordinator.UpdateFailed = _MockUpdateFailed
 sys.modules["homeassistant.helpers.update_coordinator"] = _mock_ha_coordinator
 
+class MockDeviceInfo(dict):
+    """DeviceInfo mock that acts like dict and object."""
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
+
+# homeassistant.helpers.device_registry
+_mock_ha_dr = MagicMock()
+_mock_ha_dr.DeviceInfo = MockDeviceInfo
+sys.modules["homeassistant.helpers.device_registry"] = _mock_ha_dr
+
 # homeassistant 나머지 모듈 (MagicMock으로 충분)
 for _mod in [
     "homeassistant",
@@ -34,7 +57,6 @@ for _mod in [
     "homeassistant.data_entry_flow",
     "homeassistant.helpers",
     "homeassistant.helpers.aiohttp_client",
-    "homeassistant.helpers.device_registry",
     "homeassistant.helpers.entity",
     "homeassistant.helpers.entity_platform",
     "homeassistant.helpers.selector",

@@ -47,6 +47,7 @@ class OpinetRuntimeData:
         default_factory=dict
     )
     urea_coordinator: OpinetUreaCoordinator | None = None
+    hub_device_id: str | None = None
 
 
 type OpinetConfigEntry = ConfigEntry[OpinetRuntimeData]
@@ -60,6 +61,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: OpinetConfigEntry) -> bo
     offset = entry.options.get(
         CONF_REFRESH_OFFSET, DEFAULT_REFRESH_OFFSET_MINUTES
     )
+
+    # 허브 기기(오피넷 전국 평균 유가 정보)를 플랫폼/주유소 코디네이터 등록 전에 생성하여
+    # 주유소 기기들이 via_device_id로 참조할 수 있도록 한다.
+    hub_device = _async_setup_devices(hass, entry)
 
     avg_coordinator = OpinetAvgCoordinator(hass, entry, api, offset)
     await avg_coordinator.async_config_entry_first_refresh()
@@ -77,7 +82,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: OpinetConfigEntry) -> bo
     for subentry_id, subentry in entry.subentries.items():
         station_id = subentry.data[CONF_STATION_ID]
         coordinator = OpinetStationCoordinator(
-            hass, entry, api, station_id, offset
+            hass, entry, api, station_id, offset, hub_device_id=hub_device.id
         )
         await coordinator.async_config_entry_first_refresh()
         coordinator.async_setup_schedule()
@@ -102,9 +107,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: OpinetConfigEntry) -> bo
         weekly_coordinator=weekly_coordinator,
         station_coordinators=station_coordinators,
         urea_coordinator=urea_coordinator,
+        hub_device_id=hub_device.id,
     )
-
-    _async_setup_devices(hass, entry)
 
     # 데이터 조회용 서비스(전 API)를 1회만 등록한다.
     async_setup_services(hass)
@@ -114,13 +118,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: OpinetConfigEntry) -> bo
     return True
 
 
-def _async_setup_devices(hass: HomeAssistant, entry: OpinetConfigEntry) -> None:
+def _async_setup_devices(
+    hass: HomeAssistant, entry: OpinetConfigEntry
+) -> dr.DeviceEntry:
     """허브 기기(오피넷 전국 평균 유가 정보)를 미리 생성한다.
 
-    주유소 기기들이 via_device 로 이 허브를 부모로 삼으므로, 주유소 엔티티가
+    주유소 기기들이 via_device_id 로 이 허브를 부모로 삼으므로, 주유소 엔티티가
     로드되기 전에 허브가 존재해야 한다.
     """
-    dr.async_get(hass).async_get_or_create(
+    return dr.async_get(hass).async_get_or_create(
         config_entry_id=entry.entry_id,
         identifiers={(DOMAIN, entry.entry_id)},
         translation_key="nationwide_average",
