@@ -1,9 +1,23 @@
 """Opinet 디바이스 및 via_device_id 테스트."""
 import asyncio
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import AsyncMock, MagicMock, patch
+
+from homeassistant.config_entries import ConfigEntryState
+from homeassistant.helpers.device_registry import DeviceInfo
 
 from custom_components.opinet import _async_setup_devices, async_setup_entry
-from custom_components.opinet.coordinator import OpinetStationCoordinator
+from custom_components.opinet.coordinator import (
+    OpinetScheduledCoordinator,
+    OpinetStationCoordinator,
+)
+
+
+def test_device_info_supports_via_device_id():
+    """DeviceInfo에 via_device_id 키가 존재함을 검증 (homeassistant>=2026.8.0).
+
+    homeassistant>=2026.8.0 의존성을 강제하여 hacs.json에 명시한 최소 버전과의 정합성을 보장한다.
+    """
+    assert "via_device_id" in DeviceInfo.__annotations__
 
 
 def test_station_coordinator_device_info_via_device_id():
@@ -33,26 +47,26 @@ def test_async_setup_devices_creates_hub_device():
     """_async_setup_devices가 허브 디바이스를 생성하고 DeviceEntry를 반환하는지 검증."""
     hass = MagicMock()
     entry = MagicMock(entry_id="entry_123")
-    mock_dr = MagicMock()
-    mock_device = MagicMock(id="hub_dev_456")
-    mock_dr.async_get_or_create.return_value = mock_device
 
-    from homeassistant.helpers import device_registry as dr
-    dr.async_get.return_value = mock_dr
+    with patch("custom_components.opinet.dr.async_get") as mock_async_get:
+        mock_dr = MagicMock()
+        mock_device = MagicMock(id="hub_dev_456")
+        mock_dr.async_get_or_create.return_value = mock_device
+        mock_async_get.return_value = mock_dr
 
-    result = _async_setup_devices(hass, entry)
-    assert result == mock_device
-    mock_dr.async_get_or_create.assert_called_once_with(
-        config_entry_id="entry_123",
-        identifiers={("opinet", "entry_123")},
-        translation_key="nationwide_average",
-        manufacturer="Korea National Oil Corporation (Opinet)",
-        model="Nationwide average price",
-    )
+        result = _async_setup_devices(hass, entry)
+        assert result == mock_device
+        mock_dr.async_get_or_create.assert_called_once_with(
+            config_entry_id="entry_123",
+            identifiers={("opinet", "entry_123")},
+            translation_key="nationwide_average",
+            manufacturer="Korea National Oil Corporation (Opinet)",
+            model="Nationwide average price",
+        )
 
 
 def test_async_setup_entry_passes_hub_device_id():
-    """async_setup_entry에서 생성된 hub_device.id가 주유소 코디네이터 및 runtime_data에 전달되는지 검증."""
+    """async_setup_entry에서 생성된 hub_device.id가 주유소 코디네이터에 전달되는지 검증."""
     async def _run():
         hass = MagicMock()
         hass.config_entries.async_forward_entry_setups = AsyncMock(return_value=True)
@@ -61,24 +75,34 @@ def test_async_setup_entry_passes_hub_device_id():
             entry_id="entry_abc",
             data={"api_key": "test_key"},
             options={},
+            state=ConfigEntryState.SETUP_IN_PROGRESS,
             subentries={
                 "sub1": MagicMock(data={"station_id": "A1234567"}),
             },
         )
 
-        mock_dr = MagicMock()
-        mock_hub_device = MagicMock(id="hub_dev_abc")
-        mock_dr.async_get_or_create.return_value = mock_hub_device
+        with (
+            patch("custom_components.opinet.dr.async_get") as mock_async_get,
+            patch.object(
+                OpinetScheduledCoordinator,
+                "async_config_entry_first_refresh",
+                new_callable=AsyncMock,
+            ),
+            patch.object(
+                OpinetScheduledCoordinator,
+                "async_setup_schedule",
+            ),
+        ):
+            mock_dr = MagicMock()
+            mock_hub_device = MagicMock(id="hub_dev_abc")
+            mock_dr.async_get_or_create.return_value = mock_hub_device
+            mock_async_get.return_value = mock_dr
 
-        from homeassistant.helpers import device_registry as dr
-        dr.async_get.return_value = mock_dr
+            result = await async_setup_entry(hass, entry)
 
-        result = await async_setup_entry(hass, entry)
-
-        assert result is True
-        assert entry.runtime_data.hub_device_id == "hub_dev_abc"
-        assert "sub1" in entry.runtime_data.station_coordinators
-        station_coord = entry.runtime_data.station_coordinators["sub1"]
-        assert station_coord.hub_device_id == "hub_dev_abc"
+            assert result is True
+            assert "sub1" in entry.runtime_data.station_coordinators
+            station_coord = entry.runtime_data.station_coordinators["sub1"]
+            assert station_coord.hub_device_id == "hub_dev_abc"
 
     asyncio.run(_run())

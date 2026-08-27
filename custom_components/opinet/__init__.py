@@ -47,7 +47,6 @@ class OpinetRuntimeData:
         default_factory=dict
     )
     urea_coordinator: OpinetUreaCoordinator | None = None
-    hub_device_id: str | None = None
 
 
 type OpinetConfigEntry = ConfigEntry[OpinetRuntimeData]
@@ -62,10 +61,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: OpinetConfigEntry) -> bo
         CONF_REFRESH_OFFSET, DEFAULT_REFRESH_OFFSET_MINUTES
     )
 
-    # 허브 기기(오피넷 전국 평균 유가 정보)를 플랫폼/주유소 코디네이터 등록 전에 생성하여
-    # 주유소 기기들이 via_device_id로 참조할 수 있도록 한다.
-    hub_device = _async_setup_devices(hass, entry)
-
     avg_coordinator = OpinetAvgCoordinator(hass, entry, api, offset)
     await avg_coordinator.async_config_entry_first_refresh()
     avg_coordinator.async_setup_schedule()
@@ -78,11 +73,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: OpinetConfigEntry) -> bo
     await weekly_coordinator.async_config_entry_first_refresh()
     weekly_coordinator.async_setup_schedule()
 
+    # 주유소 기기들이 via_device_id 로 참조할 허브 기기를 생성한다.
+    hub_device = _async_setup_devices(hass, entry)
+
     station_coordinators: dict[str, OpinetStationCoordinator] = {}
     for subentry_id, subentry in entry.subentries.items():
         station_id = subentry.data[CONF_STATION_ID]
         coordinator = OpinetStationCoordinator(
-            hass, entry, api, station_id, offset, hub_device_id=hub_device.id
+            hass, entry, api, station_id, hub_device.id, offset
         )
         await coordinator.async_config_entry_first_refresh()
         coordinator.async_setup_schedule()
@@ -107,7 +105,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: OpinetConfigEntry) -> bo
         weekly_coordinator=weekly_coordinator,
         station_coordinators=station_coordinators,
         urea_coordinator=urea_coordinator,
-        hub_device_id=hub_device.id,
     )
 
     # 데이터 조회용 서비스(전 API)를 1회만 등록한다.

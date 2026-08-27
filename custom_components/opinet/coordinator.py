@@ -235,8 +235,8 @@ class OpinetStationCoordinator(OpinetScheduledCoordinator):
         entry: ConfigEntry,
         api: OpinetApi,
         station_id: str,
+        hub_device_id: str,
         offset_minutes: int = DEFAULT_REFRESH_OFFSET_MINUTES,
-        hub_device_id: str | None = None,
     ) -> None:
         super().__init__(
             hass,

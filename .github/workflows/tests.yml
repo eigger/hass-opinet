@@ -45,7 +45,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install pytest pyproj voluptuous
+          pip install pytest pyproj voluptuous "homeassistant>=2026.8.0"
 
       - name: Run tests
         run: python -m pytest tests/ -v
