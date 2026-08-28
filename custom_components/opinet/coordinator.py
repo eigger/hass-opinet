@@ -235,6 +235,7 @@ class OpinetStationCoordinator(OpinetScheduledCoordinator):
         entry: ConfigEntry,
         api: OpinetApi,
         station_id: str,
+        hub_device_id: str,
         offset_minutes: int = DEFAULT_REFRESH_OFFSET_MINUTES,
     ) -> None:
         super().__init__(
@@ -246,6 +247,7 @@ class OpinetStationCoordinator(OpinetScheduledCoordinator):
             offset_minutes=offset_minutes,
         )
         self.station_id = station_id
+        self.hub_device_id = hub_device_id
 
     @property
     def brand_name(self) -> str | None:
@@ -262,14 +264,13 @@ class OpinetStationCoordinator(OpinetScheduledCoordinator):
         """주유소 기기 정보. 제조사=정유사(상표), 모델=업종, 허브 기기의 하위로 연결된다."""
         data = self.data or {}
         refiner = self.brand_name
-        entry_id = self.config_entry.entry_id if self.config_entry else ""
         return DeviceInfo(
             identifiers={(DOMAIN, self.station_id)},
             # 기기 이름은 실제 주유소 상호(데이터) — 라벨이 아니므로 그대로 사용.
             name=data.get("name") or self.station_id,
             manufacturer=refiner or None,
             model=self.station_type,
-            via_device=(DOMAIN, entry_id),
+            via_device_id=self.hub_device_id,
         )
 
     async def _async_update_data(self) -> dict[str, Any]:

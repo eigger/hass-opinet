@@ -73,11 +73,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: OpinetConfigEntry) -> bo
     await weekly_coordinator.async_config_entry_first_refresh()
     weekly_coordinator.async_setup_schedule()
 
+    # 주유소 기기들이 via_device_id 로 참조할 허브 기기를 생성한다.
+    hub_device = _async_setup_devices(hass, entry)
+
     station_coordinators: dict[str, OpinetStationCoordinator] = {}
     for subentry_id, subentry in entry.subentries.items():
         station_id = subentry.data[CONF_STATION_ID]
         coordinator = OpinetStationCoordinator(
-            hass, entry, api, station_id, offset
+            hass, entry, api, station_id, hub_device.id, offset
         )
         await coordinator.async_config_entry_first_refresh()
         coordinator.async_setup_schedule()
@@ -104,8 +107,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: OpinetConfigEntry) -> bo
         urea_coordinator=urea_coordinator,
     )
 
-    _async_setup_devices(hass, entry)
-
     # 데이터 조회용 서비스(전 API)를 1회만 등록한다.
     async_setup_services(hass)
 
@@ -114,13 +115,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: OpinetConfigEntry) -> bo
     return True
 
 
-def _async_setup_devices(hass: HomeAssistant, entry: OpinetConfigEntry) -> None:
+def _async_setup_devices(
+    hass: HomeAssistant, entry: OpinetConfigEntry
+) -> dr.DeviceEntry:
     """허브 기기(오피넷 전국 평균 유가 정보)를 미리 생성한다.
 
-    주유소 기기들이 via_device 로 이 허브를 부모로 삼으므로, 주유소 엔티티가
+    주유소 기기들이 via_device_id 로 이 허브를 부모로 삼으므로, 주유소 엔티티가
     로드되기 전에 허브가 존재해야 한다.
     """
-    dr.async_get(hass).async_get_or_create(
+    return dr.async_get(hass).async_get_or_create(
         config_entry_id=entry.entry_id,
         identifiers={(DOMAIN, entry.entry_id)},
         translation_key="nationwide_average",
