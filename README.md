@@ -3,7 +3,7 @@
 [![GitHub Release](https://img.shields.io/github/v/release/eigger/hass-opinet?style=flat-square)](https://github.com/eigger/hass-opinet/releases)
 [![Tests](https://img.shields.io/github/actions/workflow/status/eigger/hass-opinet/tests.yml?branch=main&style=flat-square&label=tests)](https://github.com/eigger/hass-opinet/actions/workflows/tests.yml)
 [![License](https://img.shields.io/github/license/eigger/hass-opinet?style=flat-square)](LICENSE)
-[![HACS](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
+[![HACS](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/hacs/integration)
 ![integration usage](https://img.shields.io/badge/dynamic/json?color=41BDF5&logo=home-assistant&label=usage&suffix=%20installs&cacheSeconds=15600&query=%24.opinet.total&url=https%3A%2F%2Fanalytics.home-assistant.io%2Fcustom_integrations.json)
 
 
@@ -115,10 +115,26 @@ response_variable: result
 
 ## 설치
 
-1. 이 저장소를 HACS의 사용자 지정 저장소로 추가하거나, `custom_components/opinet` 폴더를
-   Home Assistant 설정 디렉터리의 `custom_components/` 아래에 복사합니다.
+### 방법 1: HACS를 통한 설치 (권장)
+
+이 통합구성요소는 HACS 기본 저장소에 공식 등록되어 있어 별도의 사용자 지정 저장소 추가 없이 바로 설치할 수 있습니다.
+
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=eigger&repository=hass-opinet&category=integration)
+
+또는 HACS UI에서 직접 설치:
+1. Home Assistant에서 **HACS → Integrations(통합구성요소)** 로 이동합니다.
+2. 우측 하단의 **"+ 탐색 및 다운로드"** 버튼을 누르고 **"Opinet 유가정보"** 를 검색합니다.
+3. 통합구성요소를 다운로드한 후 Home Assistant를 재시작합니다.
+
+### 방법 2: 수동 설치
+
+1. 이 저장소의 `custom_components/opinet` 폴더를 Home Assistant 설정 디렉터리의 `custom_components/opinet` 아래에 복사합니다.
 2. Home Assistant를 재시작합니다.
-3. **설정 → 기기 및 서비스 → 통합구성요소 추가 → "Opinet 유가정보"** 를 선택하고 API 키를 입력합니다.
+
+## 설정
+
+1. **설정 → 기기 및 서비스 → 통합구성요소 추가 → "Opinet 유가정보"** 를 선택합니다.
+2. 발급받은 API 키를 입력합니다.
 
 ## 주유소 추가
 
