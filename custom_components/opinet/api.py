@@ -9,7 +9,7 @@ import json
 import logging
 from typing import Any
 
-from aiohttp import ClientError, ClientSession
+from aiohttp import ClientError, ClientResponseError, ClientSession
 
 from .const import API_BASE
 
@@ -73,8 +73,14 @@ class OpinetApi:
             # (예: ureaPrice.do)는 PRICE/STOCK_YN 등 문자열 값 안에 escape 되지
             # 않은 제어문자(\r\n)를 그대로 넣어 보내므로 strict=False 로 파싱한다.
             data = json.loads(text, strict=False)
+        except ClientResponseError as err:
+            raise OpinetConnectionError(
+                f"Opinet request failed with status {err.status}"
+            ) from err
         except ClientError as err:
-            raise OpinetConnectionError(f"Opinet request failed: {err}") from err
+            raise OpinetConnectionError(
+                f"Opinet request failed: {err.__class__.__name__}"
+            ) from err
         except ValueError as err:
             # Body was not JSON -> almost always an invalid/expired key page.
             raise OpinetAuthError("Opinet returned a non-JSON response") from err
