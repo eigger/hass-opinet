@@ -72,6 +72,10 @@ if not _HA_INSTALLED:
         "homeassistant.components.device_tracker",
         "homeassistant.util",
         "homeassistant.util.dt",
-        "aiohttp",
     ]:
         sys.modules[_mod] = MagicMock()
+
+    try:
+        import aiohttp  # noqa: F401
+    except ImportError:
+        sys.modules["aiohttp"] = MagicMock()

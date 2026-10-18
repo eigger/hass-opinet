@@ -74,13 +74,15 @@ class OpinetApi:
             # 않은 제어문자(\r\n)를 그대로 넣어 보내므로 strict=False 로 파싱한다.
             data = json.loads(text, strict=False)
         except ClientResponseError as err:
+            _LOGGER.debug("Opinet request failed with HTTP status %s", err.status)
             raise OpinetConnectionError(
                 f"Opinet request failed with status {err.status}"
-            ) from err
+            ) from None
         except ClientError as err:
+            _LOGGER.debug("Opinet request failed: %s", err.__class__.__name__)
             raise OpinetConnectionError(
                 f"Opinet request failed: {err.__class__.__name__}"
-            ) from err
+            ) from None
         except ValueError as err:
             # Body was not JSON -> almost always an invalid/expired key page.
             raise OpinetAuthError("Opinet returned a non-JSON response") from err

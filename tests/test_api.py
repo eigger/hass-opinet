@@ -1,5 +1,6 @@
 """api.py 단위 테스트."""
 import asyncio
+import traceback
 from unittest.mock import MagicMock
 
 from aiohttp import ClientConnectionError, ClientResponseError, RequestInfo
@@ -47,12 +48,15 @@ def test_request_client_response_error_does_not_leak_api_key():
     with pytest.raises(OpinetConnectionError) as exc_info:
         asyncio.run(api.async_get_avg_all_price())
 
+    assert exc_info.value.__cause__ is None
     assert api_key not in str(exc_info.value)
     assert "status 500" in str(exc_info.value)
+    tb = "".join(traceback.format_exception(exc_info.value))
+    assert api_key not in tb
 
 
 def test_request_client_error_does_not_leak_api_key():
-    """일반 ClientError 발생 시 URL/API 키가 에러 메시지에 노출되지 않고 클래스명이 표시되는지 검증."""
+    """일반 ClientError 발생 시 URL/API 키가 에러 메시지 및 traceback에 노출되지 않고 클래스명이 표시되는지 검증."""
     api_key = "SECRET_API_KEY_12345"
     session = MagicMock()
     session.get.side_effect = ClientConnectionError(f"Connection failed: code={api_key}")
@@ -61,5 +65,8 @@ def test_request_client_error_does_not_leak_api_key():
     with pytest.raises(OpinetConnectionError) as exc_info:
         asyncio.run(api.async_get_avg_all_price())
 
+    assert exc_info.value.__cause__ is None
     assert api_key not in str(exc_info.value)
     assert "ClientConnectionError" in str(exc_info.value)
+    tb = "".join(traceback.format_exception(exc_info.value))
+    assert api_key not in tb
