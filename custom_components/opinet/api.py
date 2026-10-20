@@ -9,7 +9,7 @@ import json
 import logging
 from typing import Any
 
-from aiohttp import ClientError, ClientResponseError, ClientSession
+from aiohttp import ClientError, ClientResponseError, ClientSession, ClientTimeout
 
 from .const import API_BASE
 
@@ -66,7 +66,9 @@ class OpinetApi:
             {key: str(value) for key, value in params.items() if value is not None}
         )
         try:
-            async with self._session.get(url, params=query) as resp:
+            async with self._session.get(
+                url, params=query, timeout=ClientTimeout(total=30)
+            ) as resp:
                 resp.raise_for_status()
                 text = await resp.text()
             # Opinet serves JSON with a text/html content type. 일부 엔드포인트
@@ -78,7 +80,7 @@ class OpinetApi:
             raise OpinetConnectionError(
                 f"Opinet request failed with status {err.status}"
             ) from None
-        except ClientError as err:
+        except (ClientError, TimeoutError) as err:
             _LOGGER.debug("Opinet request failed: %s", err.__class__.__name__)
             raise OpinetConnectionError(
                 f"Opinet request failed: {err.__class__.__name__}"
@@ -157,9 +159,7 @@ class OpinetApi:
         self, prodcd: str, area: str | None = None, cnt: int | None = None
     ) -> list[dict[str, Any]]:
         """⑧ lowTop10.do — 전국/지역별 최저가 주유소(TOP20)."""
-        return await self._request(
-            "lowTop10.do", prodcd=prodcd, area=area, cnt=cnt
-        )
+        return await self._request("lowTop10.do", prodcd=prodcd, area=area, cnt=cnt)
 
     # ── ⑨ 반경 내 주유소 검색 ─────────────────────────────────────
     async def async_get_around_all(
@@ -232,9 +232,7 @@ class OpinetApi:
         self, date: str, prodcd: str | None = None
     ) -> list[dict[str, Any]]:
         """⑰ dateAvgRecentPrice.do — 특정 7일간 전국 일일 평균가격."""
-        return await self._request(
-            "dateAvgRecentPrice.do", date=date, prodcd=prodcd
-        )
+        return await self._request("dateAvgRecentPrice.do", date=date, prodcd=prodcd)
 
     # ── ⑱ 특정 7일간 전국 일일 상표별 평균가격 ────────────────────
     async def async_get_date_poll_avg_recent_price(

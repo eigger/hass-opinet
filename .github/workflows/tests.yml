@@ -1,51 +1,34 @@
+# Shared standards; upstream action SHAs verified 2026-10-17.
 name: Tests
-
-on:
+'on':
   push:
-    branches: [main, master]
-  pull_request:
-
+    branches:
+    - main
+  pull_request: null
+  workflow_dispatch: null
+permissions:
+  contents: read
 concurrency:
-  group: tests-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: "3.14"
-
-      - name: Install ruff
-        run: pip install ruff
-
-      - name: Lint
-        run: python -m ruff check custom_components/ tests/
-
-  test:
-    runs-on: ubuntu-latest
-    needs: lint
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.14"]
-
-    steps:
-      - uses: actions/checkout@v5
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v6
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install dependencies
-        run: |
-          pip install --upgrade pip
-          pip install pytest pyproj voluptuous "homeassistant>=2026.8.0"
-
-      - name: Run tests
-        run: python -m pytest tests/ -v
+  current:
+    uses: eigger/hass-repo-standards/.github/workflows/python-tests.yml@6839346bc5e2a11157fecd800f4cb490fc3197ab # reviewed central main
+    with:
+      standards-ref: 6839346bc5e2a11157fecd800f4cb490fc3197ab
+      domain: opinet
+      python-versions: '["3.14"]'
+      requirements: requirements_test.txt
+      expected-ha-version: '2026.10.2'
+      test-profile: ha
+      pytest-args: tests/components/opinet/ -v
+  minimum-ha:
+    uses: eigger/hass-repo-standards/.github/workflows/python-tests.yml@6839346bc5e2a11157fecd800f4cb490fc3197ab # reviewed central main
+    with:
+      standards-ref: 6839346bc5e2a11157fecd800f4cb490fc3197ab
+      domain: opinet
+      python-versions: '["3.14"]'
+      requirements: requirements_test_minimum_ha.txt
+      expected-ha-version: '2026.9.0'
+      test-profile: ha
+      pytest-args: tests/components/opinet/ -v

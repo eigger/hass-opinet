@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass, field
 
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.config_entries import ConfigEntry, ConfigEntryState
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
@@ -57,21 +57,16 @@ async def async_setup_entry(hass: HomeAssistant, entry: OpinetConfigEntry) -> bo
     session = async_get_clientsession(hass)
     api = OpinetApi(session, entry.data[CONF_API_KEY])
 
-    offset = entry.options.get(
-        CONF_REFRESH_OFFSET, DEFAULT_REFRESH_OFFSET_MINUTES
-    )
+    offset = entry.options.get(CONF_REFRESH_OFFSET, DEFAULT_REFRESH_OFFSET_MINUTES)
 
     avg_coordinator = OpinetAvgCoordinator(hass, entry, api, offset)
     await avg_coordinator.async_config_entry_first_refresh()
-    avg_coordinator.async_setup_schedule()
 
     recent_coordinator = OpinetRecentAvgCoordinator(hass, entry, api, offset)
     await recent_coordinator.async_config_entry_first_refresh()
-    recent_coordinator.async_setup_schedule()
 
     weekly_coordinator = OpinetWeeklyAvgCoordinator(hass, entry, api, offset)
     await weekly_coordinator.async_config_entry_first_refresh()
-    weekly_coordinator.async_setup_schedule()
 
     # 주유소 기기들이 via_device_id 로 참조할 허브 기기를 생성한다.
     hub_device = _async_setup_devices(hass, entry)
@@ -83,7 +78,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: OpinetConfigEntry) -> bo
             hass, entry, api, station_id, hub_device.id, offset
         )
         await coordinator.async_config_entry_first_refresh()
-        coordinator.async_setup_schedule()
         station_coordinators[subentry_id] = coordinator
 
     # 등록 주유소들의 시도코드(시군코드 앞 2자리)로 요소수 가격/재고를 조회한다.
@@ -96,7 +90,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: OpinetConfigEntry) -> bo
     if areas:
         urea_coordinator = OpinetUreaCoordinator(hass, entry, api, areas, offset)
         await urea_coordinator.async_config_entry_first_refresh()
-        urea_coordinator.async_setup_schedule()
 
     entry.runtime_data = OpinetRuntimeData(
         api=api,
@@ -107,10 +100,20 @@ async def async_setup_entry(hass: HomeAssistant, entry: OpinetConfigEntry) -> bo
         urea_coordinator=urea_coordinator,
     )
 
-    # 데이터 조회용 서비스(전 API)를 1회만 등록한다.
-    async_setup_services(hass)
-
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+
+    # Register schedules and shared actions only after every initial refresh
+    # and platform setup succeeds, so partial setup cannot leave them behind.
+    for scheduled in (
+        avg_coordinator,
+        recent_coordinator,
+        weekly_coordinator,
+        *station_coordinators.values(),
+    ):
+        scheduled.async_setup_schedule()
+    if urea_coordinator is not None:
+        urea_coordinator.async_setup_schedule()
+    async_setup_services(hass)
     entry.async_on_unload(entry.add_update_listener(_async_update_listener))
     return True
 
@@ -132,9 +135,7 @@ def _async_setup_devices(
     )
 
 
-async def _async_update_listener(
-    hass: HomeAssistant, entry: OpinetConfigEntry
-) -> None:
+async def _async_update_listener(hass: HomeAssistant, entry: OpinetConfigEntry) -> None:
     """Reload the entry when subentries (stations) are added/removed."""
     await hass.config_entries.async_reload(entry.entry_id)
 
@@ -143,6 +144,9 @@ async def async_unload_entry(hass: HomeAssistant, entry: OpinetConfigEntry) -> b
     """Unload a config entry."""
     unloaded = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     # 마지막 엔트리가 내려가면 서비스도 제거한다.
-    if unloaded and len(hass.config_entries.async_entries(DOMAIN)) <= 1:
+    if unloaded and not any(
+        other.entry_id != entry.entry_id and other.state is ConfigEntryState.LOADED
+        for other in hass.config_entries.async_entries(DOMAIN)
+    ):
         async_unload_services(hass)
     return unloaded

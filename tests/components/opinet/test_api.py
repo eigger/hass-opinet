@@ -1,5 +1,7 @@
 """api.py 단위 테스트."""
+
 import asyncio
+import logging
 import traceback
 from unittest.mock import MagicMock
 
@@ -59,7 +61,9 @@ def test_request_client_error_does_not_leak_api_key():
     """일반 ClientError 발생 시 URL/API 키가 에러 메시지 및 traceback에 노출되지 않고 클래스명이 표시되는지 검증."""
     api_key = "SECRET_API_KEY_12345"
     session = MagicMock()
-    session.get.side_effect = ClientConnectionError(f"Connection failed: code={api_key}")
+    session.get.side_effect = ClientConnectionError(
+        f"Connection failed: code={api_key}"
+    )
 
     api = OpinetApi(session, api_key)
     with pytest.raises(OpinetConnectionError) as exc_info:
@@ -70,3 +74,26 @@ def test_request_client_error_does_not_leak_api_key():
     assert "ClientConnectionError" in str(exc_info.value)
     tb = "".join(traceback.format_exception(exc_info.value))
     assert api_key not in tb
+
+
+def test_request_timeout_does_not_leak_api_key(caplog):
+    """Timeouts have a finite request deadline and a sanitized error."""
+    session = MagicMock()
+    caplog.set_level(logging.DEBUG, logger="custom_components.opinet.api")
+    session.get.side_effect = TimeoutError("code=SECRET_API_KEY")
+    api = OpinetApi(session, "SECRET_API_KEY")
+    with pytest.raises(OpinetConnectionError, match="TimeoutError") as error:
+        asyncio.run(api.async_get_avg_all_price())
+    assert "SECRET_API_KEY" not in "".join(traceback.format_exception(error.value))
+    assert session.get.call_args.kwargs["timeout"].total == 30
+    assert "TimeoutError" in caplog.text
+    assert "SECRET_API_KEY" not in caplog.text
+
+
+def test_request_cancellation_propagates():
+    """Cancelling HA work does not convert cancellation into an API failure."""
+    session = MagicMock()
+    session.get.side_effect = asyncio.CancelledError()
+    api = OpinetApi(session, "test-key")
+    with pytest.raises(asyncio.CancelledError):
+        asyncio.run(api.async_get_avg_all_price())

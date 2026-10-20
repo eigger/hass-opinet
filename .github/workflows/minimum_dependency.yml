@@ -1,0 +1,44 @@
+name: Minimum dependency
+'on':
+  push:
+    branches:
+    - main
+  pull_request: null
+  workflow_dispatch: null
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  pyproj:
+    name: HA current / minimum pyproj
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      with:
+        persist-credentials: false
+    # pyproj 3.6.1 predates Python 3.14 wheels and needs PROJ for its source build.
+    - name: Install PROJ build requirements
+      run: sudo apt-get update && sudo apt-get install -y libproj-dev proj-bin build-essential
+    - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+      with:
+        python-version: '3.14'
+    # Build constraints require pip >=25.3; pin the bootstrap installer too.
+    - name: Enable isolated build constraints
+      run: python -m pip install --upgrade 'pip==26.2.1'
+    - uses: eigger/hass-repo-standards/actions/python-environment@6839346bc5e2a11157fecd800f4cb490fc3197ab # reviewed central main
+      env:
+        PIP_BUILD_CONSTRAINT: ${{ github.workspace }}/requirements_build_minimum.txt
+        # Rebuild the source with this constraint instead of reusing an old wheel.
+        PIP_NO_CACHE_DIR: '1'
+      with:
+        domain: opinet
+        python-version: '3.14'
+        requirements: requirements_test.txt
+        dependency-mode: minimum
+        minimum-packages: '["pyproj"]'
+        expected-ha-version: '2026.10.2'
+        test-profile: ha
+    - run: python -m pytest tests/components/opinet/ -v

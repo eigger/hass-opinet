@@ -1,6 +1,7 @@
 {
   "domain": "opinet",
   "name": "Opinet 유가정보",
+  "categories": ["energy.energy_prices"],
   "codeowners": ["@eigger"],
   "config_flow": true,
   "documentation": "https://github.com/eigger/hass-opinet",

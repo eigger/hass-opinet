@@ -1,4 +1,5 @@
 """geo.py 단위 테스트."""
+
 import pytest
 from custom_components.opinet.geo import katec_to_wgs84, wgs84_to_katec
 
