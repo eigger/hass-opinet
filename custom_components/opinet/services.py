@@ -11,6 +11,7 @@ from collections.abc import Awaitable, Callable
 from typing import Any
 
 import voluptuous as vol
+from homeassistant.config_entries import ConfigEntryState
 from homeassistant.core import (
     HomeAssistant,
     ServiceCall,
@@ -140,9 +141,7 @@ _SERVICES: list[tuple[str, vol.Schema, _Handler]] = [
     # ⑪ 상호로 주유소 검색
     (
         "search_station",
-        vol.Schema(
-            {vol.Required("osnm"): cv.string, vol.Optional("area"): cv.string}
-        ),
+        vol.Schema({vol.Required("osnm"): cv.string, vol.Optional("area"): cv.string}),
         lambda api, d: api.async_search_by_name(d["osnm"], d.get("area")),
     ),
     # ⑫ 최근 7일 전국 일일 면세유 평균가격
@@ -232,7 +231,7 @@ def _station_id_from_device(hass: HomeAssistant, device_id: str) -> str:
     if device is None:
         raise HomeAssistantError(f"기기 {device_id} 를 찾을 수 없습니다.")
     # 허브(entry_id) 식별자는 제외하고, 주유소 식별자 (DOMAIN, 주유소ID) 만 추출.
-    excluded = set(device.config_entries)
+    excluded = {device.config_entry_id}
     for domain, identifier in device.identifiers:
         if domain == DOMAIN and identifier not in excluded:
             return identifier
@@ -242,15 +241,15 @@ def _station_id_from_device(hass: HomeAssistant, device_id: str) -> str:
 def _get_api(hass: HomeAssistant) -> OpinetApi:
     """로드된 Opinet 엔트리에서 API 클라이언트를 얻는다."""
     for entry in hass.config_entries.async_entries(DOMAIN):
+        if entry.state is not ConfigEntryState.LOADED:
+            continue
         runtime = getattr(entry, "runtime_data", None)
         if runtime is not None:
             return runtime.api
     raise HomeAssistantError("Opinet 통합이 아직 로드되지 않았습니다.")
 
 
-def _resolve_location(
-    hass: HomeAssistant, data: dict[str, Any]
-) -> tuple[float, float]:
+def _resolve_location(hass: HomeAssistant, data: dict[str, Any]) -> tuple[float, float]:
     """엔티티 → 위경도 → 홈 좌표 순으로 위치를 결정한다."""
     entity_id = data.get("entity_id")
     if entity_id:
@@ -260,9 +259,7 @@ def _resolve_location(
         lat = state.attributes.get("latitude")
         lon = state.attributes.get("longitude")
         if lat is None or lon is None:
-            raise HomeAssistantError(
-                f"{entity_id} 에 위치(위경도) 정보가 없습니다."
-            )
+            raise HomeAssistantError(f"{entity_id} 에 위치(위경도) 정보가 없습니다.")
         return float(lat), float(lon)
 
     if data.get("latitude") is not None and data.get("longitude") is not None:

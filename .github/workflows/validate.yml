@@ -1,30 +1,32 @@
+# Shared standards; upstream action SHAs verified 2026-10-17.
 name: Validate
-
-on:
+'on':
   push:
-    branches: [main, master]
-  pull_request:
+    branches:
+    - main
+  pull_request: null
+  workflow_dispatch: null
   schedule:
-    - cron: "0 0 * * *"
-  workflow_dispatch:
-
-permissions: {}
-
+  - cron: 23 3 * * 1
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
-  validate-hacs:
+  validate:
+    uses: eigger/hass-repo-standards/.github/workflows/validate-integration.yml@6839346bc5e2a11157fecd800f4cb490fc3197ab # reviewed central main
+    with:
+      hassfest-core-ref: ec18d8b25d1ee39aa8b85a72a170e42bee33228c
+  standards:
+    name: Central template compliance
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v5
-
-      - name: HACS validation
-        uses: hacs/action@main
-        with:
-          category: integration
-
-  validate-hassfest:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-
-      - name: Hassfest validation
-        uses: home-assistant/actions/hassfest@master
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      with:
+        persist-credentials: false
+    - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+      with:
+        python-version: '3.14'
+    - uses: eigger/hass-repo-standards/actions/check-standards@6839346bc5e2a11157fecd800f4cb490fc3197ab # reviewed central main

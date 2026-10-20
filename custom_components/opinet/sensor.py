@@ -45,8 +45,7 @@ async def async_setup_entry(
 
     # 전국 평균 — 현재/일일/주간 (하나의 공통 기기에 묶음).
     async_add_entities(
-        OpinetAvgSensor(data.avg_coordinator, entry_id, prodcd)
-        for prodcd in PRODUCTS
+        OpinetAvgSensor(data.avg_coordinator, entry_id, prodcd) for prodcd in PRODUCTS
     )
     async_add_entities(
         OpinetRecentAvgSensor(data.recent_coordinator, entry_id, prodcd)
@@ -93,9 +92,7 @@ async def async_setup_entry(
             async_add_entities(
                 (
                     OpinetStationUreaSensor(urea_coordinator, coordinator, uni_id),
-                    OpinetStationUreaStockSensor(
-                        urea_coordinator, coordinator, uni_id
-                    ),
+                    OpinetStationUreaStockSensor(urea_coordinator, coordinator, uni_id),
                 ),
                 config_subentry_id=subentry_id,
             )
@@ -240,9 +237,7 @@ class OpinetWeeklyAvgSensor(
         }
 
 
-class OpinetStationSensor(
-    CoordinatorEntity[OpinetStationCoordinator], SensorEntity
-):
+class OpinetStationSensor(CoordinatorEntity[OpinetStationCoordinator], SensorEntity):
     """Selling price of a single product at a specific gas station."""
 
     _attr_has_entity_name = True
@@ -251,9 +246,7 @@ class OpinetStationSensor(
     _attr_suggested_display_precision = 0
     _attr_icon = "mdi:gas-station"
 
-    def __init__(
-        self, coordinator: OpinetStationCoordinator, prodcd: str
-    ) -> None:
+    def __init__(self, coordinator: OpinetStationCoordinator, prodcd: str) -> None:
         super().__init__(coordinator)
         self._prodcd = prodcd
         station_id = coordinator.station_id
@@ -263,9 +256,7 @@ class OpinetStationSensor(
 
     @property
     def _price(self) -> dict[str, Any]:
-        return (self.coordinator.data or {}).get("prices", {}).get(
-            self._prodcd, {}
-        )
+        return (self.coordinator.data or {}).get("prices", {}).get(self._prodcd, {})
 
     @property
     def native_value(self) -> float | None:
@@ -365,9 +356,7 @@ class OpinetStationAmenitySensor(
         return AMENITY_YES if str(value).upper() == "Y" else AMENITY_NO
 
 
-class OpinetStationUreaSensor(
-    CoordinatorEntity[OpinetUreaCoordinator], SensorEntity
-):
+class OpinetStationUreaSensor(CoordinatorEntity[OpinetUreaCoordinator], SensorEntity):
     """요소수(DEF) 판매가격 — 주유소별."""
 
     _attr_has_entity_name = True

@@ -1,0 +1,45 @@
+{
+  "repository": "eigger/hass-opinet",
+  "default_branch": "main",
+  "readmes": [
+    "README.md",
+    "README.ko.md"
+  ],
+  "hacs": "default",
+  "release": true,
+  "installation_link": "#installation",
+  "hacs_default_evidence": "https://github.com/hacs/default/blob/a75c02e2cb94db482c5aaddcc83d0dad00cc20a0/integration#L1025 (verified 2026-10-20)",
+  "tests_workflow": "tests.yml",
+  "validate_workflow": "validate.yml",
+  "installation_links": {
+    "README.md": "#installation",
+    "README.ko.md": "#설치"
+  },
+  "readme": {
+    "title": "Opinet 유가정보 Home Assistant Integration (hass-opinet)",
+    "descriptions": {
+      "en": "A Home Assistant custom integration that retrieves fuel prices using the Korea National Oil Corporation’s Opinet general API.",
+      "ko": "한국석유공사 **오피넷(Opinet) 일반 API**를 사용해 유가 정보를 가져오는 Home Assistant 커스텀 통합구성요소입니다."
+    },
+    "issues": true,
+    "discussions": true,
+    "license_name": "MIT License",
+    "license_notices": {
+      "en": [
+        "Copyright (c) 2026 eigger"
+      ],
+      "ko": [
+        "Copyright (c) 2026 eigger"
+      ]
+    },
+    "related_projects": []
+  },
+  "exceptions": [],
+  "categories_review": {
+    "value": [
+      "energy.energy_prices"
+    ],
+    "integration_type": null,
+    "source": "Opinet general API provides nationwide fuel averages and station fuel selling prices (README Sensors/Services; https://www.opinet.co.kr/user/custapi/custApiInfo.do). Primary category energy.energy_prices describes this energy-price service directly; no secondary category is needed. Taxonomy: https://github.com/home-assistant/core/blob/ec18d8b25d1ee39aa8b85a72a170e42bee33228c/homeassistant/generated/integration_categories.json (reviewed 2026-10-20)."
+  }
+}
