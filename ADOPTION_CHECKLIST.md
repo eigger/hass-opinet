@@ -19,7 +19,7 @@
 | 최소 테스트 HA / 호환 Python·플러그인 | HA 2026.9.0 / Python 3.14 / pytest-homeassistant-custom-component 0.13.363 (실행 결과 아래) |
 | profile / 테스트 경로 | integration / ha; tests/components/opinet/ |
 | 이전 검토 기록 | 최초 채택 |
-| 채택 판정 | 이관 진행 중 — 검증 및 원격 반영 전 |
+| 채택 판정 | PR implementation and CI verified; final squash/main result is maintained in the central adoption-status row |
 
 상태: `TODO` = 미확인·미충족, `PASS` = 근거로 확인, `EXCEPTION` = 적용 대상의 기록된 예외, `N/A` = 적용 조건에 해당 없음. 모든 항목은 미확인으로 시작합니다. `TODO`를 해당 없음으로 처리하지 않습니다. 묶은 규칙의 결과가 다르면 행을 나눕니다. 권장 항목은 별도로 표시했으며 미채택 이유를 기록합니다.
 
@@ -28,7 +28,7 @@
 | 규칙 ID | 확인 항목 | 상태 | 근거 / 남은 작업 |
 |---|---|---|---|
 | GOV-01, GOV-02 | `STANDARDS.md`에 표준 SHA·profile·실제 기본 브랜치·예외 기록, workflow/action은 검토 SHA로 고정 | PASS | STANDARDS/profile/main and caller SHA recorded. Central PR11 squash6839346 is published main, tree-identical to independently verified source089c86d. Four central PR checks passed. Integration callers use6839346. |
-| GOV-03 | 새 표준 채택 변경의 영향·이관 방법과 명시적 채택 PR 확인. 규칙 자체를 변경하면 공통 CHANGELOG 기록 | TODO | 명시적 최초 채택 작업 트리. PR15 published; actual final PR/squash checks are tracked in the central status table. |
+| GOV-03 | 새 표준 채택 변경의 영향·이관 방법과 명시적 채택 PR 확인. 규칙 자체를 변경하면 공통 CHANGELOG 기록 | PASS | Explicit adoption PR15, runtime source81968c0 and CI correction c66ed8f. Final reviewed c66ed8f passed all8 remote checks; central rule fix PR11 is merged with CHANGELOG. Final squash/main evidence is recorded centrally. |
 | GOV-04 | 중앙 표에 작업 시작·단계 변경·종료 상태, 담당·적용 내용·검증/리뷰 근거·남은 작업 갱신, 타 리포 기록 보존 | PASS | 2026-10-20 중앙 로컬 docs/adoption-status.md 자기 행만 갱신; 타 세션 변경 보존. 원격 미게시 사실 명시. |
 | GOV-05 | 구현과 독립 리뷰·검증을 별도 서브 에이전트에게 위임, 지적 수정·재검증 및 결과 취합 | PASS | implementation/documentation implemented; review independently verified. Fixed schedule trigger, last loaded entry cleanup and caplog findings, then reran 27 tests on both HA versions. |
 | HA-01, HA-13 | `custom_components/<domain>/`와 domain 일치, 필요한 모듈·공개 API·생명주기는 Core 대응 구조 | PASS | custom_components/opinet 및 tests/components/opinet, typed runtime_data·ConfigEntry 공개 setup/unload/플랫폼 API 사용. |
@@ -69,13 +69,13 @@
 | 규칙 ID | 확인 항목 | 상태 | 근거 / 남은 작업 |
 |---|---|---|---|
 | HACS-01, HACS-02 | 루트 README/LICENSE/hacs.json, 검증한 최소 HA, 실제 배포 구조와 필요한 옵션 일치 | PASS | README/LICENSE/hacs.json and custom_components/opinet layout retained. Exact declared minimum2026.9.0 verified. No unnecessary packaging flags. |
-| HACS-03, HACS-05 | Default 여부는 목록 근거로 확인, [로컬 brand/icon.png 또는 원격 brands 근거](https://github.com/eigger/hass-repo-standards/blob/6839346bc5e2a11157fecd800f4cb490fc3197ab/docs/hacs.md)와 HACS/Hassfest 실제 실행, ignore는 이유·해제 조건 기록 | TODO | Default listing and local brand/icon.png confirmed. Official HACS remote baseline8761e7c:10checks PASS(categories warning1); local changed tree HACS/remote CI pending. Local full official Coreec18d8 Hassfest Integrations1/Invalid0 PASS. No ignore flags. |
+| HACS-03, HACS-05 | Default 여부는 목록 근거로 확인, [로컬 brand/icon.png 또는 원격 brands 근거](https://github.com/eigger/hass-repo-standards/blob/6839346bc5e2a11157fecd800f4cb490fc3197ab/docs/hacs.md)와 HACS/Hassfest 실제 실행, ignore는 이유·해제 조건 기록 | PASS | Default listing/local brand confirmed. PR15 c66ed8f official HACS10checks PASS without categories warning; source-built official Coreec18d8 full Hassfest Integrations1/Invalid0 PASS; no ignore flags. Validate39428476087. |
 | HACS-06 (권장) | description·topics·issue 경로·brands 및 사용하는 HACS 필드 지원 확인 | PASS | 실제 description/topics와 활성 Issues/Discussions 확인. 기존 로컬 brand/icon.png 유지. |
 | CI-01, CI-02 | Validate/Tests 공통화, 확장 job 유지, 공용 파일명·표시 이름·PR 대상 제한 없는 기본 이벤트·실제 기본 브랜치 push·dispatch·기존 schedule, 전용 CI 명명 형식 | PASS | Shared Tests/current+minimumHA, Validate and updater callers retained. PROJ source-build extension minimum_dependency.yml uses central composite, not a replacement Tests caller. PR without branch/paths filters, actualmain push/dispatch. CI-02 requires central weekly Validate cron; prior daily schedule changed accordingly. |
 | CI-03, CI-05, CI-08 | 최소 권한·checkout 자격증명 비보존·timeout·concurrency, full SHA·갱신 관리, 비신뢰 입력·secrets 경계 | PASS | contents:read·persist-credentials:false·timeout/concurrency는 중앙 caller/action에 따름. updater job만 PR용 write. full SHA 고정 및 Dependabot. |
-| CI-04, CI-07, CI-12 | 실패를 숨기지 않는 실제 `ha` 필수 테스트, 버전별 환경·cache·Ruff 설정과 required checks 이름 확인 | TODO | All three local HA/package environments27passed/pipcheck PASS. Branch protection404 and no rulesets verified, settings unchanged. Central squash6839346 is published; integration PR15 remote checks in progress; final head and squash checks will be recorded centrally. |
+| CI-04, CI-07, CI-12 | 실패를 숨기지 않는 실제 `ha` 필수 테스트, 버전별 환경·cache·Ruff 설정과 required checks 이름 확인 | PASS | PR15 c66ed8f all8 checks PASS: exact current/minimumHA, exact pyproj minimum, lint2, HACS, Hassfest, central template. No failure suppression. Branch protection404/no rulesets, settings unchanged. Final squash/main results tracked centrally. |
 | DEP-03, DEP-04, CI-09 | updater의 선택 package·연산자/extras/marker 보존, 안정 버전·major 정책, 실제 기본 브랜치·단일 bot branch·PR만 제안 | PASS | updater pyproj 하나 선택, 공용 SHA 고정·기본 dry-run: pyproj>=3.6.1 → >=3.8.0 제안. 실제 파일은 3.6.1 유지. 명령은 아래 참조. |
-| CI-09, CI-10, DEP-08 | 변경 tree의 새 하한·실제 HA 검증 후 PR 동기화, 실패 시 중단·변경 없음 시 기존 PR 정리, 후속 required checks 충족 방식 확인 | TODO | 공용 updater의 변경 tree 최소설치/pip check/실제 HA pytest 후 PR 구조 적용. 실제 업데이트 PR 및 후속 GITHUB_TOKEN required checks는 미실행. |
+| CI-09, CI-10, DEP-08 | 변경 tree의 새 하한·실제 HA 검증 후 PR 동기화, 실패 시 중단·변경 없음 시 기존 PR 정리, 후속 required checks 충족 방식 확인 | N/A | No runtime dependency requirement changed, so an actual dependency-update PR/new-floor validation was not triggered. Shared updater wiring and pyproj dry-run verified; no bot PR or repository permission change was made. Future update PRs must satisfy the shared validation/check requirements. |
 
 ## README·Bluetooth·유지보수
 
@@ -100,8 +100,8 @@ No approved exceptions. The user explicitly authorized the central checker fix a
 | Remaining item | Owner | Completion evidence |
 |---|---|---|
 | Central fix: completed | root/review | Central PR11 squash6839346 published,4checks PASS, source branch deleted |
-| GOV-03/CI/HACS-05: commit and publish this integration tree and check actual target CI | Maintainer | Actual final SHA Tests/Minimum dependency/Validate runs; not yet run |
-| CI-09/CI-10: actual updater PR and downstream required checks | Maintainer | Dry-run passed; real PR not executed; repository settings unchanged |
+| Integration PR verification: completed | root/review | PR15 c66ed8f all8 checks PASS; squash/main evidence tracked centrally |
+| Future dependency update PR | Maintainer | N/A for this adoption: no requirement changed; dry-run and shared wiring checked |
 
 The central checkout's adoption-status row was updated locally only; other sessions' edits were preserved. Adoption remains in progress until remote/default-branch evidence exists.
 
@@ -142,3 +142,12 @@ N/A — manifest/import에 imagespec 없으며 렌더링 payload 액션을 제�
 ## Remote publication and CI correction
 
 Central PR11 squash6839346 passed all four main checks: https://github.com/eigger/hass-repo-standards/actions/runs/39427843961. Integration PR15 initial head81968c0 passed HACS and central template validation. Initial minimum job39427985968 failed during setup-python cache discovery because PIP_NO_CACHE_DIR was inherited. Replace that broad setting with command-specific pip install no-cache-dir through PIP_CONFIG_FILE, preserving the Cython build constraint. PIP_NO_BINARY alone was tested and rejected: cached built wheels remained reusable, and preparing the latest sdist conflicted with the historical Cython build constraint. This is a workflow-environment fix; runtime code/tests/support minima are unchanged. Final head/squash CI evidence is maintained in the central adoption-status row.
+
+## Verified remote PR snapshot
+
+PR15 runtime/CI source `c66ed8f047f62ffca040f452da5c4eef6efe34e2` passed all eight checks. This documentation update does not change runtime/tests/workflows; final PR and merge SHA checks are recorded in the central adoption status.
+
+- [Tests39428475940](https://github.com/eigger/hass-opinet/actions/runs/39428475940): Python3.14.8, HA2026.10.2/plugin0.13.373 and exact minimumHA2026.9.0/plugin0.13.363, pyproj3.8.0; each27passed, pipcheck and both lint jobs PASS.
+- [Minimum39428475073](https://github.com/eigger/hass-opinet/actions/runs/39428475073): exactpyproj3.6.1 original source build with Cython3.0.12 and pip install-only cache configuration; actual HA tests and pipcheck PASS. The full central environment action ran successfully.
+- [Validate39428476087](https://github.com/eigger/hass-opinet/actions/runs/39428476087): central template PASS, HACS10checks PASS without category warning, official Coreec18d8 source fetch/HEAD match/original Dockerfile/full Hassfest validator Integrations1/Invalid0 PASS.
+- Independent review confirmed the full logs, actual versions and failure counts. Earlier failure/cancelled runs are preserved; they are not reused as evidence of success.
