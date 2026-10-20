@@ -10,7 +10,7 @@
 - 조율 / 구현 / 독립 리뷰·검증: root(opinet-adoption) / implementation·documentation / review
 - 중앙 현황 갱신: 2026-10-20 로컬 자기 리포 행만 갱신; 원격 미게시, 다른 세션 변경 보존
 - 실제 원격 / 기본 브랜치: https://github.com/eigger/hass-opinet.git / main
-- 검토 대상: `8761e7c4fe6091df61a622568b011369a65d6568` + 작업 트리 (커밋·push·PR 미수행)
+- 검토 대상: `8761e7c4fe6091df61a622568b011369a65d6568` + adoption PR #15 (https://github.com/eigger/hass-opinet/pull/15); review baseline81968c0, later fixes/evidence are recorded below
 - 테스트 경로: `tests/components/opinet/`
 - 변경 전·후 지원 최소 HA: `2026.9.0` (`hacs.json.homeassistant`), 상향 없음
 - 통합 버전 / 런타임 의존성: `2.0.0` / `pyproj>=3.6.1` 유지
@@ -38,3 +38,9 @@
 The user explicitly authorized the central checker fix and squash merging/branch cleanup on 2026-10-20. [Central PR11](https://github.com/eigger/hass-repo-standards/pull/11) was squash merged as `6839346bc5e2a11157fecd800f4cb490fc3197ab` after all four PR checks passed. The original reviewed main was `648dad941a118c80325f44c7a13cb5b5b9c1c788`; the source head was `089c86d48409ae3998078b0466f19849c75fbb9b`. The squash commit has the identical tree. All integration caller references use the new published main commit. [Central CI](https://github.com/eigger/hass-repo-standards/actions/runs/39427564265) passed219 unit tests with7 skips (one local Python syntax case and6 separately exercised payload tests), and the dedicated actual HA payload job passed all6 tests without skips. Local independent checks also passed. Central PR branch was deleted.
 
 The separate Minimum dependency job is a repository-specific PROJ source-build extension using the central python-environment composite action. Shared Tests remains responsible for current/minimum HA and lint. This does not replace the shared Tests caller. Build constraints pin Cython3.0.12 (upstream pyproj issue1451); pip26.2.1 enables isolated build constraints, and the exact runtime requirement remains pyproj>=3.6.1.
+
+## Published integration review
+
+[Integration PR15](https://github.com/eigger/hass-opinet/pull/15) targets main. Central squash6839346 passed all four [main CI jobs](https://github.com/eigger/hass-repo-standards/actions/runs/39427843961). The final integration PR and squash-merge commit checks are recorded in the [central adoption status](https://github.com/eigger/hass-repo-standards/blob/main/docs/adoption-status.md); this checklist is an implementation snapshot, not a claim about an unverified later commit.
+
+The initial remote minimum-dependency job failed before installation because disabling pip caching also reached setup-python's pip-cache discovery. The fix scopes no-cache-dir to pip install through a dedicated PIP_CONFIG_FILE, while keeping setup-python cache discovery functional. PIP_NO_BINARY was considered but rejected after actual resolver/cached-wheel experiments. No failure was ignored and the exact runtime minimum remains3.6.1.

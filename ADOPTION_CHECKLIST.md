@@ -8,7 +8,7 @@
 |---|---|
 | 통합 리포 / 실제 기본 브랜치 | eigger/hass-opinet / main |
 | domain / 구현 경로 | opinet / custom_components/opinet/ |
-| 검토 대상 통합 커밋 / 채택 PR | 8761e7c4fe6091df61a622568b011369a65d6568 + 작업 트리 / PR 미생성 |
+| 검토 대상 통합 커밋 / 채택 PR | Baseline8761e7c; [PR15](https://github.com/eigger/hass-opinet/pull/15), initial published81968c0; subsequent CI fix/evidence below |
 | 검토한 표준 전체 커밋 SHA | 6839346bc5e2a11157fecd800f4cb490fc3197ab |
 | 검토일 / 조율 담당 | 2026-10-20 (Asia/Seoul) / root(opinet-adoption) |
 | 구현 서브 에이전트 / 독립 리뷰·검증 서브 에이전트 | implementation·documentation / review |
@@ -28,7 +28,7 @@
 | 규칙 ID | 확인 항목 | 상태 | 근거 / 남은 작업 |
 |---|---|---|---|
 | GOV-01, GOV-02 | `STANDARDS.md`에 표준 SHA·profile·실제 기본 브랜치·예외 기록, workflow/action은 검토 SHA로 고정 | PASS | STANDARDS/profile/main and caller SHA recorded. Central PR11 squash6839346 is published main, tree-identical to independently verified source089c86d. Four central PR checks passed. Integration callers use6839346. |
-| GOV-03 | 새 표준 채택 변경의 영향·이관 방법과 명시적 채택 PR 확인. 규칙 자체를 변경하면 공통 CHANGELOG 기록 | TODO | 명시적 최초 채택 작업 트리. 커밋·PR·기본 브랜치 반영 및 해당 원격 CI 미수행. |
+| GOV-03 | 새 표준 채택 변경의 영향·이관 방법과 명시적 채택 PR 확인. 규칙 자체를 변경하면 공통 CHANGELOG 기록 | TODO | 명시적 최초 채택 작업 트리. PR15 published; actual final PR/squash checks are tracked in the central status table. |
 | GOV-04 | 중앙 표에 작업 시작·단계 변경·종료 상태, 담당·적용 내용·검증/리뷰 근거·남은 작업 갱신, 타 리포 기록 보존 | PASS | 2026-10-20 중앙 로컬 docs/adoption-status.md 자기 행만 갱신; 타 세션 변경 보존. 원격 미게시 사실 명시. |
 | GOV-05 | 구현과 독립 리뷰·검증을 별도 서브 에이전트에게 위임, 지적 수정·재검증 및 결과 취합 | PASS | implementation/documentation implemented; review independently verified. Fixed schedule trigger, last loaded entry cleanup and caplog findings, then reran 27 tests on both HA versions. |
 | HA-01, HA-13 | `custom_components/<domain>/`와 domain 일치, 필요한 모듈·공개 API·생명주기는 Core 대응 구조 | PASS | custom_components/opinet 및 tests/components/opinet, typed runtime_data·ConfigEntry 공개 setup/unload/플랫폼 API 사용. |
@@ -73,7 +73,7 @@
 | HACS-06 (권장) | description·topics·issue 경로·brands 및 사용하는 HACS 필드 지원 확인 | PASS | 실제 description/topics와 활성 Issues/Discussions 확인. 기존 로컬 brand/icon.png 유지. |
 | CI-01, CI-02 | Validate/Tests 공통화, 확장 job 유지, 공용 파일명·표시 이름·PR 대상 제한 없는 기본 이벤트·실제 기본 브랜치 push·dispatch·기존 schedule, 전용 CI 명명 형식 | PASS | Shared Tests/current+minimumHA, Validate and updater callers retained. PROJ source-build extension minimum_dependency.yml uses central composite, not a replacement Tests caller. PR without branch/paths filters, actualmain push/dispatch. CI-02 requires central weekly Validate cron; prior daily schedule changed accordingly. |
 | CI-03, CI-05, CI-08 | 최소 권한·checkout 자격증명 비보존·timeout·concurrency, full SHA·갱신 관리, 비신뢰 입력·secrets 경계 | PASS | contents:read·persist-credentials:false·timeout/concurrency는 중앙 caller/action에 따름. updater job만 PR용 write. full SHA 고정 및 Dependabot. |
-| CI-04, CI-07, CI-12 | 실패를 숨기지 않는 실제 `ha` 필수 테스트, 버전별 환경·cache·Ruff 설정과 required checks 이름 확인 | TODO | All three local HA/package environments27passed/pipcheck PASS. Branch protection404 and no rulesets verified, settings unchanged. Central squash6839346 is published; integration tree remote checks not run yet. |
+| CI-04, CI-07, CI-12 | 실패를 숨기지 않는 실제 `ha` 필수 테스트, 버전별 환경·cache·Ruff 설정과 required checks 이름 확인 | TODO | All three local HA/package environments27passed/pipcheck PASS. Branch protection404 and no rulesets verified, settings unchanged. Central squash6839346 is published; integration PR15 remote checks in progress; final head and squash checks will be recorded centrally. |
 | DEP-03, DEP-04, CI-09 | updater의 선택 package·연산자/extras/marker 보존, 안정 버전·major 정책, 실제 기본 브랜치·단일 bot branch·PR만 제안 | PASS | updater pyproj 하나 선택, 공용 SHA 고정·기본 dry-run: pyproj>=3.6.1 → >=3.8.0 제안. 실제 파일은 3.6.1 유지. 명령은 아래 참조. |
 | CI-09, CI-10, DEP-08 | 변경 tree의 새 하한·실제 HA 검증 후 PR 동기화, 실패 시 중단·변경 없음 시 기존 PR 정리, 후속 required checks 충족 방식 확인 | TODO | 공용 updater의 변경 tree 최소설치/pip check/실제 HA pytest 후 PR 구조 적용. 실제 업데이트 PR 및 후속 GITHUB_TOKEN required checks는 미실행. |
 
@@ -138,3 +138,7 @@ N/A — manifest/import에 imagespec 없으며 렌더링 payload 액션을 제�
 - Updater dry-run: `uv run --no-project --with packaging==26.3 --python 3.14 ../hass-repo-standards/actions/update-manifest/update.py --manifest custom_components/opinet/manifest.json --packages '["pyproj"]'`: proposes>=3.8.0, exit0, no write. Runtime requirement remains>=3.6.1.
 - Central unit log: `/private/tmp/opinet-review-central-tests-canonical.log`; implementation `/private/tmp/opinet-standards-subentry-unittest-physical.log`.
 - Official HACS Default record checked2026-10-20. data-v2 record exists but downloads field is absent; this is not zero installs. External live Opinet API key/service calls and HA UI were not tested.
+
+## Remote publication and CI correction
+
+Central PR11 squash6839346 passed all four main checks: https://github.com/eigger/hass-repo-standards/actions/runs/39427843961. Integration PR15 initial head81968c0 passed HACS and central template validation. Initial minimum job39427985968 failed during setup-python cache discovery because PIP_NO_CACHE_DIR was inherited. Replace that broad setting with command-specific pip install no-cache-dir through PIP_CONFIG_FILE, preserving the Cython build constraint. PIP_NO_BINARY alone was tested and rejected: cached built wheels remained reusable, and preparing the latest sdist conflicted with the historical Cython build constraint. This is a workflow-environment fix; runtime code/tests/support minima are unchanged. Final head/squash CI evidence is maintained in the central adoption-status row.

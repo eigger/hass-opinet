@@ -31,8 +31,8 @@ jobs:
     - uses: eigger/hass-repo-standards/actions/python-environment@6839346bc5e2a11157fecd800f4cb490fc3197ab # reviewed central main
       env:
         PIP_BUILD_CONSTRAINT: ${{ github.workspace }}/requirements_build_minimum.txt
-        # Rebuild the source with this constraint instead of reusing an old wheel.
-        PIP_NO_CACHE_DIR: '1'
+        # Disable install cache without breaking setup-python's pip cache lookup.
+        PIP_CONFIG_FILE: ${{ github.workspace }}/.github/pip_minimum.ini
       with:
         domain: opinet
         python-version: '3.14'
