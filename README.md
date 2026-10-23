@@ -12,9 +12,11 @@ A Home Assistant custom integration that retrieves fuel prices using the Korea N
 [![Tests](https://img.shields.io/github/actions/workflow/status/eigger/hass-opinet/tests.yml?branch=main&style=flat&label=Tests)](https://github.com/eigger/hass-opinet/actions/workflows/tests.yml)
 [![Validate](https://img.shields.io/github/actions/workflow/status/eigger/hass-opinet/validate.yml?branch=main&style=flat&label=Validate)](https://github.com/eigger/hass-opinet/actions/workflows/validate.yml)
 [![License](https://img.shields.io/github/license/eigger/hass-opinet?style=flat)](LICENSE)
-[![HACS Downloads](https://img.shields.io/badge/dynamic/json?style=flat&color=41BDF5&label=HACS+Downloads&query=%24%5B%3F%28%40.full_name%3D%3D%22eigger%2Fhass-opinet%22%29%5D.downloads&url=https%3A%2F%2Fdata-v2.hacs.xyz%2Fintegration%2Fdata.json)](https://www.hacs.xyz/)
+[![Downloads](https://img.shields.io/github/downloads/eigger/hass-opinet/total?style=flat&color=41BDF5&label=Downloads)](https://github.com/eigger/hass-opinet/releases)
 <!-- hass-standards:badges:end -->
 <!-- hass-standards:header:end -->
+
+The Downloads badge counts GitHub release asset downloads across all releases, not active installations. HACS source-file installations are not counted; ZIP release distribution is not used.
 
 - Enter your **API key** during initial setup to create the shared **national average price sensors**.
 - **Add a gas station** afterward to create sensors for each product sold by that station.
