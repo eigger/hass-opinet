@@ -16,7 +16,7 @@ A Home Assistant custom integration that retrieves fuel prices using the Korea N
 <!-- hass-standards:badges:end -->
 <!-- hass-standards:header:end -->
 
-The Downloads badge counts GitHub release asset downloads across all releases, not active installations. HACS source-file installations are not counted; ZIP release distribution is not used.
+The Downloads badge counts GitHub release asset downloads across all releases, not active installations.
 
 - Enter your **API key** during initial setup to create the shared **national average price sensors**.
 - **Add a gas station** afterward to create sensors for each product sold by that station.

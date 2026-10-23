@@ -16,7 +16,7 @@
 <!-- hass-standards:badges:end -->
 <!-- hass-standards:header:end -->
 
-Downloads 배지는 모든 GitHub 릴리스의 첨부 asset 다운로드 합계이며 활성 설치 수가 아닙니다. HACS 소스 파일 설치는 집계되지 않으며 ZIP 릴리스 배포는 사용하지 않습니다.
+Downloads 배지는 모든 GitHub 릴리스의 첨부 asset 다운로드 합계이며 활성 설치 수가 아닙니다.
 
 - 처음 구성 시 **API 키**를 입력하면 **전국 평균가격 공통 센서**가 생성됩니다.
 - 이후 **주유소를 추가**하면 해당 주유소의 제품별 유가 센서가 추가됩니다.
