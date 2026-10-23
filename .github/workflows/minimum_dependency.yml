@@ -28,7 +28,7 @@ jobs:
     # Build constraints require pip >=25.3; pin the bootstrap installer too.
     - name: Enable isolated build constraints
       run: python -m pip install --upgrade 'pip==26.2.1'
-    - uses: eigger/hass-repo-standards/actions/python-environment@6839346bc5e2a11157fecd800f4cb490fc3197ab # reviewed central main
+    - uses: eigger/hass-repo-standards/actions/python-environment@b54ac48102d6e326c6929071fdc02ba8fade794e # reviewed central main
       env:
         PIP_BUILD_CONSTRAINT: ${{ github.workspace }}/requirements_build_minimum.txt
         # Disable install cache without breaking setup-python's pip cache lookup.

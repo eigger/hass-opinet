@@ -12,9 +12,11 @@
 [![Tests](https://img.shields.io/github/actions/workflow/status/eigger/hass-opinet/tests.yml?branch=main&style=flat&label=Tests)](https://github.com/eigger/hass-opinet/actions/workflows/tests.yml)
 [![Validate](https://img.shields.io/github/actions/workflow/status/eigger/hass-opinet/validate.yml?branch=main&style=flat&label=Validate)](https://github.com/eigger/hass-opinet/actions/workflows/validate.yml)
 [![License](https://img.shields.io/github/license/eigger/hass-opinet?style=flat)](LICENSE)
-[![HACS Downloads](https://img.shields.io/badge/dynamic/json?style=flat&color=41BDF5&label=HACS+Downloads&query=%24%5B%3F%28%40.full_name%3D%3D%22eigger%2Fhass-opinet%22%29%5D.downloads&url=https%3A%2F%2Fdata-v2.hacs.xyz%2Fintegration%2Fdata.json)](https://www.hacs.xyz/)
+[![Downloads](https://img.shields.io/github/downloads/eigger/hass-opinet/total?style=flat&color=41BDF5&label=Downloads)](https://github.com/eigger/hass-opinet/releases)
 <!-- hass-standards:badges:end -->
 <!-- hass-standards:header:end -->
+
+Downloads 배지는 모든 GitHub 릴리스의 첨부 asset 다운로드 합계이며 활성 설치 수가 아닙니다.
 
 - 처음 구성 시 **API 키**를 입력하면 **전국 평균가격 공통 센서**가 생성됩니다.
 - 이후 **주유소를 추가**하면 해당 주유소의 제품별 유가 센서가 추가됩니다.
