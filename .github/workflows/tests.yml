@@ -13,9 +13,9 @@ concurrency:
   cancel-in-progress: true
 jobs:
   current:
-    uses: eigger/hass-repo-standards/.github/workflows/python-tests.yml@0c1592977591ecba077a4666d699840062711201 # reviewed central main
+    uses: eigger/hass-repo-standards/.github/workflows/python-tests.yml@1863343638014adb8a4001afc8fddc1a27dc500f # reviewed central main
     with:
-      standards-ref: 0c1592977591ecba077a4666d699840062711201
+      standards-ref: 1863343638014adb8a4001afc8fddc1a27dc500f
       domain: opinet
       python-versions: '["3.14"]'
       requirements: requirements_test.txt
@@ -23,9 +23,9 @@ jobs:
       test-profile: ha
       pytest-args: tests/components/opinet/ -v
   minimum-ha:
-    uses: eigger/hass-repo-standards/.github/workflows/python-tests.yml@0c1592977591ecba077a4666d699840062711201 # reviewed central main
+    uses: eigger/hass-repo-standards/.github/workflows/python-tests.yml@1863343638014adb8a4001afc8fddc1a27dc500f # reviewed central main
     with:
-      standards-ref: 0c1592977591ecba077a4666d699840062711201
+      standards-ref: 1863343638014adb8a4001afc8fddc1a27dc500f
       domain: opinet
       python-versions: '["3.14"]'
       requirements: requirements_test_minimum_ha.txt
