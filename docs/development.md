@@ -40,7 +40,7 @@ uv run --no-project --with pyyaml --with packaging==26.3 --python 3.14 ../hass-r
 uv run --no-project --with pyyaml --with packaging==26.3 --python 3.14 ../hass-repo-standards/scripts/sync_badges.py . --check
 ```
 
-[Tests](../.github/workflows/tests.yml)는 실제 HA 테스트를 current 및 지원 최소 환경에서 실행합니다. [Minimum dependency](../.github/workflows/minimum_dependency.yml)는 Python 3.14 wheel이 없는 `pyproj==3.6.1`을 빌드하도록 PROJ 개발 패키지와 컴파일러를 설치한 뒤 중앙 `python-environment`의 minimum 모드에서 의존성을 함께 해결하고 current HA의 실제 테스트를 실행합니다. [Validate](../.github/workflows/validate.yml)는 중앙 검사·린트·Hassfest·HACS를 수행합니다. 로컬 정적 검사, 실제 HA 실행, 원격 workflow, 실서비스 연결 검증은 각각 구분합니다.
+[Tests](../.github/workflows/tests.yml)는 실제 HA 테스트를 current 및 지원 최소 환경에서 실행하고 린트를 검사합니다. [Standards](../.github/workflows/standards.yml)는 중앙 템플릿 준수를, [Validate](../.github/workflows/validate.yml)는 HACS·Hassfest를 검사합니다. 로컬 정적 검사, 실제 HA 실행, 원격 workflow, 실서비스 연결 검증은 각각 구분합니다.
 
 ## 의존성 변경
 
@@ -63,5 +63,3 @@ Current: `/tmp/opinet-current/bin/python -m pytest tests/components/opinet/ -v`;
 실제 오피넷 API 키를 사용한 실서비스 호출은 자동 테스트에서 실행하지 않습니다. API 통신을 mock한 테스트 결과는 실제 API 접근·키 유효성·서비스 호출 제한의 실증 근거가 아닙니다. 원격 CI는 변경 커밋이 반영된 뒤 해당 실행 링크로 별도 확인합니다.
 
 The central checker fix was published in [PR11](https://github.com/eigger/hass-repo-standards/pull/11) and squash merged as `6839346bc5e2a11157fecd800f4cb490fc3197ab`. It correctly validates `config_subentries.station.step`; all four central CI jobs passed. The pinned integration callers use this published main commit.
-
-For the minimum source build, install the PROJ development tools and compiler, use `pip==26.2.1`, set `PIP_BUILD_CONSTRAINT` to the absolute path of `requirements_build_minimum.txt`, and `PIP_CONFIG_FILE` to the absolute path of `.github/pip_minimum.ini`. Its `[install] no-cache-dir = true` setting prevents installation from reusing a wheel built with incompatible Cython while preserving the `pip cache dir` lookup used by `actions/setup-python`. The dedicated workflow records these steps. The Cython constraint addresses [upstream pyproj issue1451](https://github.com/pyproj4/pyproj/issues/1451); it does not change the runtime minimum.
