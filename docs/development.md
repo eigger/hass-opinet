@@ -2,7 +2,7 @@
 
 [English README](../README.md) | [한국어 README](../README.ko.md)
 
-이 저장소는 HACS에서 배포하는 Home Assistant 커스텀 통합입니다. 지원 최소는 `hacs.json`의 Home Assistant **2026.9.0**이며 최신 테스트 환경과 별도로 유지합니다. 중앙 기준은 [hass-repo-standards](https://github.com/eigger/hass-repo-standards/tree/6839346bc5e2a11157fecd800f4cb490fc3197ab)입니다. 채택 범위와 미완료 검증은 [STANDARDS.md](../STANDARDS.md)와 [ADOPTION_CHECKLIST.md](../ADOPTION_CHECKLIST.md)에 기록합니다.
+이 저장소는 HACS에서 배포하는 Home Assistant 커스텀 통합입니다. 지원 최소는 `hacs.json`의 Home Assistant **2026.9.0**이며 최신 테스트 환경과 별도로 유지합니다. 중앙 기준은 [hass-repo-standards](https://github.com/eigger/hass-repo-standards/tree/v1.0.0)입니다. 채택 범위와 미완료 검증은 [STANDARDS.md](../STANDARDS.md)와 [ADOPTION_CHECKLIST.md](../ADOPTION_CHECKLIST.md)에 기록합니다.
 
 ## 구조
 
