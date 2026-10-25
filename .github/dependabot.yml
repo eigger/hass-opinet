@@ -8,10 +8,9 @@ updates:
     directory: /
     schedule:
       interval: weekly
-    # Preserve the supported HA version and its required minimum build toolchain.
+    # Preserve the supported HA version's separate test requirements.
     exclude-paths:
       - requirements_test_minimum_ha.txt
-      - requirements_build_minimum.txt
     groups:
       home-assistant-tests:
         patterns:

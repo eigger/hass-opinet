@@ -1,3 +1,0 @@
-# pyproj 3.6.1 is incompatible with Cython >=3.1 when built from source.
-# https://github.com/pyproj4/pyproj/issues/1451
-Cython==3.0.12
