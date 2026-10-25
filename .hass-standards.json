@@ -41,5 +41,10 @@
     ],
     "integration_type": null,
     "source": "Opinet general API provides nationwide fuel averages and station fuel selling prices (README Sensors/Services; https://www.opinet.co.kr/user/custapi/custApiInfo.do). Primary category energy.energy_prices describes this energy-price service directly; no secondary category is needed. Taxonomy: https://github.com/home-assistant/core/blob/ec18d8b25d1ee39aa8b85a72a170e42bee33228c/homeassistant/generated/integration_categories.json (reviewed 2026-10-20)."
+  },
+  "standards": {
+    "kind": "release",
+    "tag": "v1.0.0",
+    "resolved_sha": "44349ee5621eea5d80e5c427f7a2435d2c2491bb"
   }
 }
