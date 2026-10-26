@@ -44,8 +44,8 @@
   },
   "standards": {
     "kind": "release",
-    "tag": "v1.1.0",
-    "resolved_sha": "a6c3f20cea07bb2ccaadd61d3d8048b76f8ded58"
+    "tag": "v1.1.1",
+    "resolved_sha": "9876b521d401071345a13bd508f43d220852c77b"
   },
   "standards_update": {
     "provider": "dependabot",
