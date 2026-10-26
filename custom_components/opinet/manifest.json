@@ -1,12 +1,18 @@
 {
   "domain": "opinet",
   "name": "Opinet 유가정보",
-  "categories": ["energy.energy_prices"],
-  "codeowners": ["@eigger"],
+  "categories": [
+    "energy.energy_prices"
+  ],
+  "codeowners": [
+    "@eigger"
+  ],
   "config_flow": true,
   "documentation": "https://github.com/eigger/hass-opinet",
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/eigger/hass-opinet/issues",
-  "requirements": ["pyproj>=3.6.1"],
+  "requirements": [
+    "pyproj>=3.8.0"
+  ],
   "version": "2.1.0"
 }
