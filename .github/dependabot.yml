@@ -1,18 +1,26 @@
 version: 2
 updates:
-  - package-ecosystem: github-actions
-    directory: /
-    schedule:
-      interval: weekly
-  - package-ecosystem: pip
-    directory: /
-    schedule:
-      interval: weekly
-    # Preserve the supported HA version's separate test requirements.
-    exclude-paths:
-      - requirements_test_minimum_ha.txt
-    groups:
-      home-assistant-tests:
-        patterns:
-          - homeassistant
-          - pytest-homeassistant-custom-component
+- package-ecosystem: github-actions
+  directory: /
+  cooldown:
+    exclude:
+    - eigger/hass-repo-standards
+    - eigger/hass-repo-standards/*
+  schedule:
+    interval: daily
+  groups:
+    central-standards:
+      patterns:
+      - eigger/hass-repo-standards
+      - eigger/hass-repo-standards/*
+- package-ecosystem: pip
+  directory: /
+  schedule:
+    interval: weekly
+  exclude-paths:
+  - requirements_test_minimum_ha.txt
+  groups:
+    home-assistant-tests:
+      patterns:
+      - homeassistant
+      - pytest-homeassistant-custom-component
