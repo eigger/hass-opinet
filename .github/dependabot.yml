@@ -2,6 +2,10 @@ version: 2
 updates:
 - package-ecosystem: github-actions
   directory: /
+  cooldown:
+    exclude:
+    - eigger/hass-repo-standards
+    - eigger/hass-repo-standards/*
   schedule:
     interval: daily
   groups:
