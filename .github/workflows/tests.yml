@@ -18,7 +18,6 @@ jobs:
       domain: opinet
       python-versions: '["3.14"]'
       requirements: requirements_test.txt
-      expected-ha-version: '2026.10.2'
       test-profile: ha
       pytest-args: tests/components/opinet/ -v
   minimum-ha:
