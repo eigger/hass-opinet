@@ -12,11 +12,11 @@ A Home Assistant custom integration that retrieves fuel prices using the Korea N
 [![Tests](https://img.shields.io/github/actions/workflow/status/eigger/hass-opinet/tests.yml?branch=main&style=flat&label=Tests)](https://github.com/eigger/hass-opinet/actions/workflows/tests.yml)
 [![Validate](https://img.shields.io/github/actions/workflow/status/eigger/hass-opinet/validate.yml?branch=main&style=flat&label=Validate)](https://github.com/eigger/hass-opinet/actions/workflows/validate.yml)
 [![License](https://img.shields.io/github/license/eigger/hass-opinet?style=flat)](LICENSE)
-[![Downloads](https://img.shields.io/github/downloads/eigger/hass-opinet/total?style=flat&color=41BDF5&label=Downloads)](https://github.com/eigger/hass-opinet/releases)
+[![Downloads](https://img.shields.io/github/downloads/eigger/hass-opinet/latest/total?style=flat&color=41BDF5&label=Downloads)](https://github.com/eigger/hass-opinet/releases)
 <!-- hass-standards:badges:end -->
 <!-- hass-standards:header:end -->
 
-The Downloads badge counts GitHub release asset downloads across all releases, not active installations.
+The Downloads badge counts GitHub release asset downloads of the current release, not active installations.
 
 - Enter your **API key** during initial setup to create the shared **national average price sensors**.
 - **Add a gas station** afterward to create sensors for each product sold by that station.
