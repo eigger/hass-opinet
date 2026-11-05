@@ -1,5 +1,5 @@
 <!-- hass-standards:header:start -->
-# Opinet 유가정보 Home Assistant Integration (hass-opinet)
+# Opinet for Home Assistant
 
 한국석유공사 **오피넷(Opinet) 일반 API**를 사용해 유가 정보를 가져오는 Home Assistant 커스텀 통합구성요소입니다.
 
@@ -15,8 +15,6 @@
 [![Downloads](https://img.shields.io/github/downloads/eigger/hass-opinet/latest/total?style=flat&color=41BDF5&label=Downloads)](https://github.com/eigger/hass-opinet/releases)
 <!-- hass-standards:badges:end -->
 <!-- hass-standards:header:end -->
-
-Downloads 배지는 현재 GitHub 릴리스의 첨부 asset 다운로드 합계이며 활성 설치 수가 아닙니다.
 
 - 처음 구성 시 **API 키**를 입력하면 **전국 평균가격 공통 센서**가 생성됩니다.
 - 이후 **주유소를 추가**하면 해당 주유소의 제품별 유가 센서가 추가됩니다.
@@ -122,16 +120,24 @@ response_variable: result
 
 응답은 `{"oil": [ ... ]}` 형태로 반환됩니다. 무료 API 호출 제한은 1,500건/일입니다.
 
+## 요구사항
+
+- **Home Assistant:** 2026.9.0 이상.
+- **API 키:** [오피넷 일반 API](https://www.opinet.co.kr/user/custapi/custApiInfo.do)에서 발급받은 키.
+
 ## 설치
 
 <!-- hass-standards:installation:start -->
 [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=eigger&repository=hass-opinet)
 <!-- hass-standards:installation:end -->
 
-1. 먼저 [HACS](https://hacs.xyz/docs/use/download/download/)를 설치한 뒤 HACS에서 **Opinet**을 검색해 이 통합을 다운로드합니다. 또는 `custom_components/opinet` 폴더를
-   Home Assistant 설정 디렉터리의 `custom_components/` 아래에 복사합니다.
-2. Home Assistant를 재시작합니다.
-3. **설정 → 기기 및 서비스 → 통합구성요소 추가 → "Opinet 유가정보"** 를 선택하고 API 키를 입력합니다.
+1. 위 배지를 클릭해 마켓플레이스에서 저장소를 엽니다.
+2. 저장소를 직접 추가하려면 **설정 → 마켓플레이스 → 링크에서 추가**에서 <https://github.com/eigger/hass-opinet>을 입력합니다. 안내가 표시되면 GitHub 계정을 연결합니다.
+3. **설치**를 선택합니다. 재시작 안내가 표시되면 Home Assistant를 재시작합니다. 설치가 끝나면 [설정](#설정)으로 이동합니다.
+
+## 설정
+
+**설정 → 기기 및 서비스 → 통합 추가 → Opinet 유가정보**를 선택하고 API 키를 입력합니다.
 
 ## 주유소 추가
 
