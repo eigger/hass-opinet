@@ -20,6 +20,34 @@
 - 이후 **주유소를 추가**하면 해당 주유소의 제품별 유가 센서가 추가됩니다.
 - 주유소는 **이름(상호)으로 검색**하거나 **주유소 ID를 직접 입력**해 추가할 수 있습니다.
 
+<a name="api-키-발급"></a>
+
+## 요구사항
+
+- **Home Assistant:** 2026.9.0 이상.
+- **API 키:** [오피넷 일반 API](https://www.opinet.co.kr/user/custapi/custApiInfo.do)에서 발급받은 키.
+
+## 설치
+
+<!-- hass-standards:installation:start -->
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=eigger&repository=hass-opinet)
+<!-- hass-standards:installation:end -->
+
+1. 위 배지를 클릭해 마켓플레이스에서 저장소를 엽니다.
+2. 저장소를 직접 추가하려면 **설정 → 마켓플레이스 → 링크에서 추가**에서 <https://github.com/eigger/hass-opinet>을 입력합니다. 안내가 표시되면 GitHub 계정을 연결합니다.
+3. **설치**를 선택합니다. 재시작 안내가 표시되면 Home Assistant를 재시작합니다. 설치가 끝나면 [설정](#설정)으로 이동합니다.
+
+## 설정
+
+**설정 → 기기 및 서비스 → 통합 추가 → Opinet 유가정보**를 선택하고 API 키를 입력합니다.
+
+## 주유소 추가
+
+통합구성요소 카드의 **"항목 추가"(주유소)** 에서:
+
+- **이름으로 검색**: 상호와(선택) 지역을 입력 → 검색 결과에서 선택
+- **주유소 ID로 추가**: 오피넷 주유소 ID(예: `A0019752`)를 입력하면 바로 추가
+
 ## 센서
 
 | 기기 | 센서 | 사용 API | 갱신 시각 |
@@ -119,36 +147,6 @@ response_variable: result
 | `opinet.get_date_area_avg_recent_price` | ⑲ dateAreaAvgRecentPrice |
 
 응답은 `{"oil": [ ... ]}` 형태로 반환됩니다. 무료 API 호출 제한은 1,500건/일입니다.
-
-## 요구사항
-
-- **Home Assistant:** 2026.9.0 이상.
-- **API 키:** [오피넷 일반 API](https://www.opinet.co.kr/user/custapi/custApiInfo.do)에서 발급받은 키.
-
-## 설치
-
-<!-- hass-standards:installation:start -->
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=eigger&repository=hass-opinet)
-<!-- hass-standards:installation:end -->
-
-1. 위 배지를 클릭해 마켓플레이스에서 저장소를 엽니다.
-2. 저장소를 직접 추가하려면 **설정 → 마켓플레이스 → 링크에서 추가**에서 <https://github.com/eigger/hass-opinet>을 입력합니다. 안내가 표시되면 GitHub 계정을 연결합니다.
-3. **설치**를 선택합니다. 재시작 안내가 표시되면 Home Assistant를 재시작합니다. 설치가 끝나면 [설정](#설정)으로 이동합니다.
-
-## 설정
-
-**설정 → 기기 및 서비스 → 통합 추가 → Opinet 유가정보**를 선택하고 API 키를 입력합니다.
-
-## 주유소 추가
-
-통합구성요소 카드의 **"항목 추가"(주유소)** 에서:
-
-- **이름으로 검색**: 상호와(선택) 지역을 입력 → 검색 결과에서 선택
-- **주유소 ID로 추가**: 오피넷 주유소 ID(예: `A0019752`)를 입력하면 바로 추가
-
-## API 키 발급
-
-[오피넷 일반 API](https://www.opinet.co.kr/user/custapi/custApiInfo.do)에서 발급받을 수 있습니다.
 
 ## 개발
 
