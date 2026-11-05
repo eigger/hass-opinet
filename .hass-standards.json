@@ -16,7 +16,7 @@
     "README.ko.md": "#설치"
   },
   "readme": {
-    "title": "Opinet 유가정보 Home Assistant Integration (hass-opinet)",
+    "title": "Opinet for Home Assistant",
     "descriptions": {
       "en": "A Home Assistant custom integration that retrieves fuel prices using the Korea National Oil Corporation’s Opinet general API.",
       "ko": "한국석유공사 **오피넷(Opinet) 일반 API**를 사용해 유가 정보를 가져오는 Home Assistant 커스텀 통합구성요소입니다."

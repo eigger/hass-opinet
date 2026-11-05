@@ -1,5 +1,5 @@
 <!-- hass-standards:header:start -->
-# Opinet 유가정보 Home Assistant Integration (hass-opinet)
+# Opinet for Home Assistant
 
 A Home Assistant custom integration that retrieves fuel prices using the Korea National Oil Corporation’s Opinet general API.
 
@@ -16,11 +16,37 @@ A Home Assistant custom integration that retrieves fuel prices using the Korea N
 <!-- hass-standards:badges:end -->
 <!-- hass-standards:header:end -->
 
-The Downloads badge counts GitHub release asset downloads of the current release, not active installations.
-
 - Enter your **API key** during initial setup to create the shared **national average price sensors**.
 - **Add a gas station** afterward to create sensors for each product sold by that station.
 - Add a station by **searching its name (business name)** or **entering its station ID directly**.
+
+<a name="obtaining-an-api-key"></a>
+
+## Requirements
+
+- **Home Assistant:** 2026.9.0 or later.
+- **API key:** A key from the [Opinet general API](https://www.opinet.co.kr/user/custapi/custApiInfo.do).
+
+## Installation
+
+<!-- hass-standards:installation:start -->
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=eigger&repository=hass-opinet)
+<!-- hass-standards:installation:end -->
+
+1. Click the badge above to open the repository in Marketplace.
+2. If you need to add it yourself, go to **Settings → Marketplace → Add from link** and enter <https://github.com/eigger/hass-opinet>. Connect GitHub if prompted.
+3. Select **Install**. Restart Home Assistant if prompted, then continue to [Configuration](#configuration).
+
+## Configuration
+
+Choose **Settings → Devices & services → Add integration → Opinet 유가정보** and enter your API key.
+
+## Adding a gas station
+
+Select **"Add entry" (gas station)** on the integration card:
+
+- **Search by name**: enter the business name and, optionally, a region → select a search result.
+- **Add by station ID**: enter the Opinet station ID (for example, `A0019752`) to add it directly.
 
 ## Sensors
 
@@ -117,27 +143,6 @@ response_variable: result
 | `opinet.get_date_area_avg_recent_price` | ⑲ dateAreaAvgRecentPrice |
 
 Responses have the form `{"oil": [ ... ]}`. The free API limit is 1,500 requests per day.
-
-## Installation
-
-<!-- hass-standards:installation:start -->
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=eigger&repository=hass-opinet)
-<!-- hass-standards:installation:end -->
-
-1. Install [HACS](https://hacs.xyz/docs/use/download/download/) first, then search for **Opinet** in HACS and download this integration. Alternatively, copy the `custom_components/opinet` folder into `custom_components/` in your Home Assistant configuration directory.
-2. Restart Home Assistant.
-3. Select **Settings → Devices & services → Add integration → "Opinet 유가정보"** and enter your API key.
-
-## Adding a gas station
-
-Select **"Add entry" (gas station)** on the integration card:
-
-- **Search by name**: enter the business name and, optionally, a region → select a search result.
-- **Add by station ID**: enter the Opinet station ID (for example, `A0019752`) to add it directly.
-
-## Obtaining an API key
-
-Request a key from the [Opinet general API](https://www.opinet.co.kr/user/custapi/custApiInfo.do).
 
 ## Development
 
